@@ -1,0 +1,31 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.pos-rel {
+    position: relative;
+}
+
+.board-game {
+    margin: 10px auto;
+    border: 3px solid sandybrown;
+    width: 450px;
+    height: 400px;
+}
+
+.caixa {
+    width: 40px;
+    height: 40px;
+    background-color: blueviolet;
+}
+
+.obstaculo {
+    width: 200px;
+    height: 10px;
+    background-color: rgb(49, 58, 34);
+
+    top: 350px;
+    left: 130px;
+}
