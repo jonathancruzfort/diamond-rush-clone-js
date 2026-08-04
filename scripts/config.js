@@ -1,3 +1,3 @@
 export default {
-    velocidadePersonagem: 1,
+    velocidadePersonagem: 10,
 }
