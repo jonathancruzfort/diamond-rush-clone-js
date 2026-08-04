@@ -1,3 +1,4 @@
 export default {
-    obstaculo: document.querySelector('.obstaculo'),
+    mapa: document.querySelector('.mapa'),
+    personagem: undefined,
 }

@@ -4,12 +4,9 @@
     box-sizing: border-box;
 }
 
-.pos-rel {
-    position: relative;
-}
-
-.board-game {
+.mapa {
     margin: 10px auto;
+    position: relative;
 
     width: 450px;
     height: 400px;
@@ -26,13 +23,13 @@
 }
 
 .obstaculo {
-    width: 200px;
-    height: 10px;
     background-color: rgb(49, 58, 34);
+}
 
+.personagem {
+    background-color: blueviolet;
+}
 
-    top: 350px;
-    left: 150px;
-    /* top: 340px; x 365, y 353
-    left: 130px; */
+.pos-abs {
+    position: absolute;
 }
