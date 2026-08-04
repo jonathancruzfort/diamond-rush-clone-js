@@ -42,14 +42,35 @@ export default {
 
     movimentacaoPersonagem(e) {
         let podeMovimentar = true
+        const posicaoPersonagem = {
+            esquerda: data.personagem[0],
+            direita: data.personagem[0] + data.personagem[2],
+            topo: data.personagem[1],
+            fundo: data.personagem[1] + data.personagem[3],
+        }
+
+        const [ 
+            esquerdaPerson,
+            topoPerson,
+            larguraPerson,
+            alturaPerson
+        ] = data.personagem
 
         if (e.key === 'ArrowLeft') {
             const proximaPosicao = $.personagem.offsetLeft - config.velocidadePersonagem
 
+
             for (const obstaculo of data.obstaculos) {
-                const x = data.personagem[0] === (obstaculo[0] + obstaculo[2])
-                const z = data.personagem[1] < (obstaculo[1] + obstaculo[3])
-                const y = obstaculo[1] < (data.personagem[1] + data.personagem[3])
+                // left, top, largura, altura
+                const posicaoObstaculo = {
+                    esquerda: obstaculo[0],
+                    direita: obstaculo[0] + obstaculo[2],
+                    topo: obstaculo[1],
+                    fundo: obstaculo[1] + obstaculo[3],
+                }
+                const x = posicaoPersonagem.esquerda <= posicaoObstaculo.direita
+                const y = posicaoPersonagem.fundo > posicaoObstaculo.topo 
+                const z = posicaoPersonagem.topo < posicaoObstaculo.fundo
 
                 if (x && y && z) {
                     podeMovimentar = false
