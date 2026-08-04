@@ -43,7 +43,7 @@ export default {
         if (!$.personagem) {
             $.personagem = $.mapa.querySelector('.personagem')
         }
-
+        
         if (e.key === 'ArrowLeft') {
             let podeMovimentar = true
             for (const obstaculo of data.obstaculos) {
@@ -61,7 +61,6 @@ export default {
                 $.personagem.style.left = ($.personagem.offsetLeft - config.velocidadePersonagem) + 'px';
             }
         }
-
         if (e.key === 'ArrowRight') {
             let podeMovimentar = true
             for (const obstaculo of data.obstaculos) {
@@ -80,12 +79,39 @@ export default {
             }
         }
         if (e.key === 'ArrowDown') {
-            data.personagem[1] = $.personagem.offsetTop + config.velocidadePersonagem
-            $.personagem.style.top = ($.personagem.offsetTop + config.velocidadePersonagem) + 'px';
+            let podeMovimentar = true
+            for (const obstaculo of data.obstaculos) {
+                if (obstaculo[1] === (data.personagem[1] + data.personagem[3]) //verifico o topo
+                    && obstaculo[0] < (data.personagem[0] + data.personagem[2]) //verifico a lateral esquerda
+                    && data.personagem[0] < (obstaculo[0] + obstaculo[2]) //verifico a lateral direita
+                ) {
+                    podeMovimentar = false
+                    return
+                }
+            }
+
+            if (podeMovimentar) {
+                data.personagem[1] = $.personagem.offsetTop + config.velocidadePersonagem
+                $.personagem.style.top = ($.personagem.offsetTop + config.velocidadePersonagem) + 'px';
+            }
         }
         if (e.key === 'ArrowUp') {
-            data.personagem[1] = $.personagem.offsetTop - config.velocidadePersonagem
-            $.personagem.style.top = ($.personagem.offsetTop - config.velocidadePersonagem) + 'px';
+            let podeMovimentar = true
+            for (const obstaculo of data.obstaculos) {
+                if (data.personagem[1] === (obstaculo[1] + obstaculo[3]) //verifico o bottom
+                    && obstaculo[0] < (data.personagem[0] + data.personagem[2]) //verifico a lateral esquerda
+                    && data.personagem[0] < (obstaculo[0] + obstaculo[2]) //verifico a lateral direita
+                ) {
+                    podeMovimentar = false
+                    return
+                }
+            }
+
+            if (podeMovimentar) {
+                data.personagem[1] = $.personagem.offsetTop - config.velocidadePersonagem
+                $.personagem.style.top = ($.personagem.offsetTop - config.velocidadePersonagem) + 'px';
+            }
+
         }
 
     }
