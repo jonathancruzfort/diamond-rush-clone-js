@@ -47,8 +47,8 @@ export default {
             topo: obj[1],
             fundo: obj[1] + obj[3],
         })
-        
-        if (e.key === 'a') {
+
+        if (e.key === 'ArrowLeft') {
             const posiPerson = pegarPosicaoObj(data.personagem)
             const proximaPosicao = posiPerson.esquerda - config.velocidadePersonagem
 
@@ -70,29 +70,30 @@ export default {
             $.personagem.style.left = proximaPosicao + 'px';
         }
 
-        if (e.key === 'd') {
+        if (e.key === 'ArrowRight') {
             const posiPerson = pegarPosicaoObj(data.personagem)
-            const proximaPosicao = posiPerson.direita + config.velocidadePersonagem //mudei para direita e sinal de mais
+            const proximaPosicao = posiPerson.direita + config.velocidadePersonagem //mudei sinal de menos para mais
 
             for (const obstaculo of data.obstaculos) {
                 const posiObst = pegarPosicaoObj(obstaculo)
 
                 const bateLateral = proximaPosicao >= posiObst.esquerda //mudei de menor para maior e de direita para esquerda
+                const ladoDireitoDoObstaculo = posiPerson.esquerda > posiObst.esquerda 
                 const mesmaAltura = posiPerson.fundo > posiObst.topo
                     && posiPerson.topo < posiObst.fundo
 
-                if (bateLateral && mesmaAltura) {
-                    data.personagem[0] = posiObst.esquerda //mudei para esquerda
-                    $.personagem.style.left = posiObst.esquerda + 'px';//mudei para esquerda
+                if (mesmaAltura && (bateLateral || ladoDireitoDoObstaculo)) {
+                    data.personagem[0] = posiObst.esquerda - data.personagem[2] //mudei para esquerda
+                    $.personagem.style.left = posiObst.esquerda - data.personagem[2] + 'px';//mudei para esquerda
                     return
                 }
             }
 
-            data.personagem[0] = proximaPosicao
-            $.personagem.style.left = proximaPosicao + 'px';
+            data.personagem[0] = proximaPosicao - data.personagem[2]
+            $.personagem.style.left = proximaPosicao - data.personagem[2] + 'px';
         }
 
-        if (e.key === 's') {
+        if (e.key === 'ArrowDown') {
             for (const obstaculo of data.obstaculos) {
                 if (obstaculo[1] === (data.personagem[1] + data.personagem[3]) //verifico o topo
                     && obstaculo[0] < (data.personagem[0] + data.personagem[2]) //verifico a lateral esquerda
@@ -106,7 +107,7 @@ export default {
             $.personagem.style.top = ($.personagem.offsetTop + config.velocidadePersonagem) + 'px';
         }
 
-        if (e.key === 'w') {
+        if (e.key === 'ArrowUp') {
             for (const obstaculo of data.obstaculos) {
                 if (data.personagem[1] === (obstaculo[1] + obstaculo[3]) //verifico o bottom
                     && obstaculo[0] < (data.personagem[0] + data.personagem[2]) //verifico a lateral esquerda
