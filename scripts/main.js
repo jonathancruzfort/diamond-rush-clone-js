@@ -41,26 +41,19 @@ export default {
     },
 
     movimentacaoPersonagem(e) {
-        let podeMovimentar = true
-
-        const posiPerson = {
-            esquerda: data.personagem[0],
-            direita: data.personagem[0] + data.personagem[2],
-            topo: data.personagem[1],
-            fundo: data.personagem[1] + data.personagem[3],
-        }
-
+        const pegarPosicaoObj = obj => ({
+            esquerda: obj[0],
+            direita: obj[0] + obj[2],
+            topo: obj[1],
+            fundo: obj[1] + obj[3],
+        })
+        
         if (e.key === 'a') {
-
-            const proximaPosicao = $.personagem.offsetLeft - config.velocidadePersonagem
+            const posiPerson = pegarPosicaoObj(data.personagem)
+            const proximaPosicao = posiPerson.esquerda - config.velocidadePersonagem
 
             for (const obstaculo of data.obstaculos) {
-                const posiObst = {
-                    esquerda: obstaculo[0],
-                    direita: obstaculo[0] + obstaculo[2],
-                    topo: obstaculo[1],
-                    fundo: obstaculo[1] + obstaculo[3],
-                }
+                const posiObst = pegarPosicaoObj(obstaculo)
 
                 const bateLateral = proximaPosicao <= posiObst.direita
                 const mesmaAltura = posiPerson.fundo > posiObst.topo
@@ -75,45 +68,28 @@ export default {
 
             data.personagem[0] = proximaPosicao
             $.personagem.style.left = proximaPosicao + 'px';
-
-
-
-            // for (const obstaculo of data.obstaculos) {
-            //     // left, top, largura, altura
-            //     const posiObst = {
-            //         esquerda: obstaculo[0],
-            //         direita: obstaculo[0] + obstaculo[2],
-            //         topo: obstaculo[1],
-            //         fundo: obstaculo[1] + obstaculo[3],
-            //     }
-            //     const bateLateral = posiPerson.esquerda <= posiObst.direita
-            //     const mesmaAltura = posiPerson.fundo > posiObst.topo 
-            //         && posiPerson.topo < posiObst.fundo
-
-            //     if (bateLateral && mesmaAltura) {
-            //         return
-            //     }
-            // }
-
-            // const proximaPosicao = $.personagem.offsetLeft - config.velocidadePersonagem
-
-            // data.personagem[0] = proximaPosicao
-            // $.personagem.style.left = proximaPosicao + 'px';
         }
 
         if (e.key === 'd') {
+            const posiPerson = pegarPosicaoObj(data.personagem)
+            const proximaPosicao = posiPerson.direita + config.velocidadePersonagem //mudei para direita e sinal de mais
+
             for (const obstaculo of data.obstaculos) {
-                if (obstaculo[0] === (data.personagem[0] + data.personagem[2])
-                    && obstaculo[1] < (data.personagem[1] + data.personagem[3])
-                    && data.personagem[1] < (obstaculo[1] + obstaculo[3])
-                ) {
-                    podeMovimentar = false
+                const posiObst = pegarPosicaoObj(obstaculo)
+
+                const bateLateral = proximaPosicao >= posiObst.esquerda //mudei de menor para maior e de direita para esquerda
+                const mesmaAltura = posiPerson.fundo > posiObst.topo
+                    && posiPerson.topo < posiObst.fundo
+
+                if (bateLateral && mesmaAltura) {
+                    data.personagem[0] = posiObst.esquerda //mudei para esquerda
+                    $.personagem.style.left = posiObst.esquerda + 'px';//mudei para esquerda
                     return
                 }
             }
 
-            data.personagem[0] = $.personagem.offsetLeft + config.velocidadePersonagem
-            $.personagem.style.left = ($.personagem.offsetLeft + config.velocidadePersonagem) + 'px';
+            data.personagem[0] = proximaPosicao
+            $.personagem.style.left = proximaPosicao + 'px';
         }
 
         if (e.key === 's') {
@@ -122,7 +98,6 @@ export default {
                     && obstaculo[0] < (data.personagem[0] + data.personagem[2]) //verifico a lateral esquerda
                     && data.personagem[0] < (obstaculo[0] + obstaculo[2]) //verifico a lateral direita
                 ) {
-                    podeMovimentar = false
                     return
                 }
             }
@@ -137,7 +112,6 @@ export default {
                     && obstaculo[0] < (data.personagem[0] + data.personagem[2]) //verifico a lateral esquerda
                     && data.personagem[0] < (obstaculo[0] + obstaculo[2]) //verifico a lateral direita
                 ) {
-                    podeMovimentar = false
                     return
                 }
             }
