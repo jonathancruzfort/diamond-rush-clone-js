@@ -56,10 +56,11 @@ export default {
                 const posiObst = pegarPosicaoObj(obstaculo)
 
                 const bateLateral = proximaPosicao <= posiObst.direita
+                const ladoDireitoDoObstaculo = posiPerson.esquerda >= posiObst.direita
                 const mesmaAltura = posiPerson.fundo > posiObst.topo
                     && posiPerson.topo < posiObst.fundo
 
-                if (mesmaAltura && bateLateral) {
+                if (ladoDireitoDoObstaculo && mesmaAltura && bateLateral) {
                     data.personagem[0] = posiObst.direita
                     $.personagem.style.left = posiObst.direita + 'px';
                     return
@@ -94,17 +95,29 @@ export default {
         }
 
         if (e.key === 'ArrowDown') {
+            const posiPerson = pegarPosicaoObj(data.personagem)
+            const proximaPosicao = posiPerson.fundo + config.velocidadePersonagem
+
             for (const obstaculo of data.obstaculos) {
-                if (obstaculo[1] === (data.personagem[1] + data.personagem[3]) //verifico o topo
-                    && obstaculo[0] < (data.personagem[0] + data.personagem[2]) //verifico a lateral esquerda
-                    && data.personagem[0] < (obstaculo[0] + obstaculo[2]) //verifico a lateral direita
-                ) {
+                const posiObst = pegarPosicaoObj(obstaculo)
+
+                const batePlataforma = proximaPosicao >= posiObst.topo
+                const emCimaDoObstaculo = posiPerson.fundo <= posiObst.topo
+                const mesmaColuna = posiPerson.direita > posiObst.esquerda
+                    && posiPerson.esquerda < posiObst.direita
+
+                console.log(emCimaDoObstaculo, mesmaColuna, batePlataforma);
+                
+
+                if (emCimaDoObstaculo && mesmaColuna && batePlataforma) {
+                    data.personagem[1] = posiObst.topo - data.personagem[3]
+                    $.personagem.style.top = posiObst.topo - data.personagem[3] + 'px';
                     return
                 }
             }
 
-            data.personagem[1] = $.personagem.offsetTop + config.velocidadePersonagem
-            $.personagem.style.top = ($.personagem.offsetTop + config.velocidadePersonagem) + 'px';
+            data.personagem[1] = proximaPosicao
+            $.personagem.style.top = proximaPosicao + 'px';
         }
 
         if (e.key === 'ArrowUp') {
