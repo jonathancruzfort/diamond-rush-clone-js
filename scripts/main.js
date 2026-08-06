@@ -59,7 +59,7 @@ export default {
                 const mesmaAltura = posiPerson.fundo > posiObst.topo
                     && posiPerson.topo < posiObst.fundo
 
-                if (bateLateral && mesmaAltura) {
+                if (mesmaAltura && bateLateral) {
                     data.personagem[0] = posiObst.direita
                     $.personagem.style.left = posiObst.direita + 'px';
                     return
@@ -72,25 +72,25 @@ export default {
 
         if (e.key === 'ArrowRight') {
             const posiPerson = pegarPosicaoObj(data.personagem)
-            const proximaPosicao = posiPerson.direita + config.velocidadePersonagem //mudei sinal de menos para mais
+            const proximaPosicao = posiPerson.esquerda + config.velocidadePersonagem
 
             for (const obstaculo of data.obstaculos) {
                 const posiObst = pegarPosicaoObj(obstaculo)
 
-                const bateLateral = proximaPosicao >= posiObst.esquerda //mudei de menor para maior e de direita para esquerda
-                const ladoDireitoDoObstaculo = posiPerson.esquerda > posiObst.esquerda 
+                const bateLateral = posiPerson.direita + config.velocidadePersonagem >= posiObst.esquerda
+                const ladoEsquerdoDoObstaculo = posiPerson.direita <= posiObst.esquerda
                 const mesmaAltura = posiPerson.fundo > posiObst.topo
                     && posiPerson.topo < posiObst.fundo
 
-                if (mesmaAltura && (bateLateral || ladoDireitoDoObstaculo)) {
-                    data.personagem[0] = posiObst.esquerda - data.personagem[2] //mudei para esquerda
+                if (ladoEsquerdoDoObstaculo && mesmaAltura && bateLateral) {
+                    data.personagem[0] = posiObst.esquerda - data.personagem[2]
                     $.personagem.style.left = posiObst.esquerda - data.personagem[2] + 'px';//mudei para esquerda
                     return
                 }
             }
 
-            data.personagem[0] = proximaPosicao - data.personagem[2]
-            $.personagem.style.left = proximaPosicao - data.personagem[2] + 'px';
+            data.personagem[0] = proximaPosicao
+            $.personagem.style.left = proximaPosicao + 'px';
         }
 
         if (e.key === 'ArrowDown') {
