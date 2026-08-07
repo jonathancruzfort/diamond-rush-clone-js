@@ -48,8 +48,14 @@ export default {
             fundo: obj[1] + obj[3],
         })
 
+        const movimenta = (proximaPosicao, orientacao, indice) => {
+            data.personagem[indice] = proximaPosicao
+            $.personagem.style[orientacao] = proximaPosicao + 'px';
+        }
+
+        const posiPerson = pegarPosicaoObj(data.personagem)
+
         if (e.key === 'ArrowLeft') {
-            const posiPerson = pegarPosicaoObj(data.personagem)
             const proximaPosicao = posiPerson.esquerda - config.velocidadePersonagem
 
             for (const obstaculo of data.obstaculos) {
@@ -61,18 +67,15 @@ export default {
                     && posiPerson.topo < posiObst.fundo
 
                 if (ladoDireitoDoObstaculo && mesmaAltura && bateLateral) {
-                    data.personagem[0] = posiObst.direita
-                    $.personagem.style.left = posiObst.direita + 'px';
+                    movimenta(posiObst.direita, 'left', 0)
                     return
                 }
             }
 
-            data.personagem[0] = proximaPosicao
-            $.personagem.style.left = proximaPosicao + 'px';
+            movimenta(proximaPosicao, 'left', 0)
         }
 
         if (e.key === 'ArrowRight') {
-            const posiPerson = pegarPosicaoObj(data.personagem)
             const proximaPosicao = posiPerson.esquerda + config.velocidadePersonagem
 
             for (const obstaculo of data.obstaculos) {
@@ -95,19 +98,15 @@ export default {
         }
 
         if (e.key === 'ArrowDown') {
-            const posiPerson = pegarPosicaoObj(data.personagem)
-            const proximaPosicao = posiPerson.fundo + config.velocidadePersonagem
+            const proximaPosicao = posiPerson.topo + config.velocidadePersonagem
 
             for (const obstaculo of data.obstaculos) {
                 const posiObst = pegarPosicaoObj(obstaculo)
 
-                const batePlataforma = proximaPosicao >= posiObst.topo
+                const batePlataforma = posiPerson.fundo + config.velocidadePersonagem >= posiObst.topo
                 const emCimaDoObstaculo = posiPerson.fundo <= posiObst.topo
                 const mesmaColuna = posiPerson.direita > posiObst.esquerda
                     && posiPerson.esquerda < posiObst.direita
-
-                console.log(emCimaDoObstaculo, mesmaColuna, batePlataforma);
-                
 
                 if (emCimaDoObstaculo && mesmaColuna && batePlataforma) {
                     data.personagem[1] = posiObst.topo - data.personagem[3]
@@ -121,17 +120,25 @@ export default {
         }
 
         if (e.key === 'ArrowUp') {
+            const proximaPosicao = posiPerson.topo - config.velocidadePersonagem
+
             for (const obstaculo of data.obstaculos) {
-                if (data.personagem[1] === (obstaculo[1] + obstaculo[3]) //verifico o bottom
-                    && obstaculo[0] < (data.personagem[0] + data.personagem[2]) //verifico a lateral esquerda
-                    && data.personagem[0] < (obstaculo[0] + obstaculo[2]) //verifico a lateral direita
-                ) {
+                const posiObst = pegarPosicaoObj(obstaculo)
+
+                const batePlataforma = proximaPosicao <= posiObst.fundo
+                const aBaixoDoObstaculo = posiPerson.topo >= posiObst.fundo
+                const mesmaColuna = posiPerson.direita > posiObst.esquerda
+                    && posiPerson.esquerda < posiObst.direita
+
+                if (aBaixoDoObstaculo && mesmaColuna && batePlataforma) {
+                    data.personagem[1] = posiObst.fundo
+                    $.personagem.style.top = posiObst.fundo + 'px';
                     return
                 }
             }
 
-            data.personagem[1] = $.personagem.offsetTop - config.velocidadePersonagem
-            $.personagem.style.top = ($.personagem.offsetTop - config.velocidadePersonagem) + 'px';
+            data.personagem[1] = proximaPosicao
+            $.personagem.style.top = proximaPosicao + 'px';
         }
     }
 }
