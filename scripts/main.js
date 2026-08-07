@@ -58,10 +58,10 @@ export default {
                 const posiObstA = pegarPosicaoObj(a)
                 const posiObstB = pegarPosicaoObj(b)
 
-                // const diferencaAPerson = posiPerson[orientPerson] - posiObstA[orientObst]
-                // const diferencaBPerson = posiPerson[orientPerson] - posiObstB[orientObst]
-                const diferencaAPerson = posiPerson.esquerda - posiObstA.direita
-                const diferencaBPerson = posiPerson.esquerda - posiObstB.direita
+                const diferencaAPerson = posiPerson[orientPerson] - posiObstA[orientObst]
+                const diferencaBPerson = posiPerson[orientPerson] - posiObstB[orientObst]
+                // const diferencaAPerson = posiPerson.esquerda - posiObstA.direita
+                // const diferencaBPerson = posiPerson.esquerda - posiObstB.direita
 
                 return diferencaAPerson < diferencaBPerson ? ordena : naoOrdena
             })
