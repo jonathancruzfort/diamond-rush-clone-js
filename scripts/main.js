@@ -53,20 +53,25 @@ export default {
             $.personagem.style[orientacao] = proximaPosicao + 'px';
         }
 
-        const posiPerson = pegarPosicaoObj(data.personagem)
-
-        if (e.key === 'ArrowLeft') {
-            const proximaPosicao = posiPerson.esquerda - config.velocidadePersonagem
-
+        const ordenaObstaculo = (ordena, naoOrdena) => {
             data.obstaculos.sort((a, b) => {
                 const posiObstA = pegarPosicaoObj(a)
                 const posiObstB = pegarPosicaoObj(b)
 
-                const diferencaA = posiPerson.esquerda - posiObstA.direita
-                const diferencaB = posiPerson.esquerda - posiObstB.direita
+                const diferencaAPerson = posiPerson.esquerda - posiObstA.direita
+                const diferencaBPerson = posiPerson.esquerda - posiObstB.direita
 
-                return diferencaA < diferencaB ? -1 : 0
+                return diferencaAPerson < diferencaBPerson ? ordena : naoOrdena
             })
+        }
+
+        const posiPerson = pegarPosicaoObj(data.personagem)
+
+
+        if (e.key === 'ArrowLeft') {
+            const proximaPosicao = posiPerson.esquerda - config.velocidadePersonagem
+
+            ordenaObstaculo(-1, 0)
 
             for (const obstaculo of data.obstaculos) {
                 const posiObst = pegarPosicaoObj(obstaculo)
@@ -87,6 +92,8 @@ export default {
 
         if (e.key === 'ArrowRight') {
             const proximaPosicao = posiPerson.esquerda + config.velocidadePersonagem
+
+            ordenaObstaculo(0, -1)
 
             for (const obstaculo of data.obstaculos) {
                 const posiObst = pegarPosicaoObj(obstaculo)
