@@ -58,6 +58,16 @@ export default {
         if (e.key === 'ArrowLeft') {
             const proximaPosicao = posiPerson.esquerda - config.velocidadePersonagem
 
+            data.obstaculos.sort((a, b) => {
+                const posiObstA = pegarPosicaoObj(a)
+                const posiObstB = pegarPosicaoObj(b)
+
+                const diferencaA = posiPerson.esquerda - posiObstA.direita
+                const diferencaB = posiPerson.esquerda - posiObstB.direita
+
+                return diferencaA < diferencaB ? -1 : 0
+            })
+
             for (const obstaculo of data.obstaculos) {
                 const posiObst = pegarPosicaoObj(obstaculo)
 
