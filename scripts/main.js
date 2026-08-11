@@ -83,12 +83,16 @@ export default {
                 const faixa = orientPerson === 'esquerda'
                     ? ['fundo', 'topo'] : ['direita', 'esquerda']
 
-                const colidePlataforma = proximaPosicao <= posiObst[orientObst]
-                const ladoDireitoDoObstaculo = posiPerson[orientPerson] >= posiObst[orientObst]
+                const colidePlataforma = direcao === 'negativo'
+                    ? proximaPosicao <= posiObst[orientObst]
+                    : posiPerson[faixa[0]] + config.velocidadePersonagem >= posiObst[orientPerson]
+                const naDirecaoDoObst = posiPerson[orientObst] >= posiObst[orientObst]
                 const mesmaFaixa = posiPerson[faixa[0]] > posiObst[faixa[1]]
                     && posiPerson[faixa[1]] < posiObst[faixa[0]]
 
-                if (ladoDireitoDoObstaculo && mesmaFaixa && colidePlataforma) {
+                console.log(naDirecaoDoObst, orientObst);
+                    
+                if (naDirecaoDoObst && mesmaFaixa && colidePlataforma) {
                     return posiObst[orientObst]
                 }
             }
