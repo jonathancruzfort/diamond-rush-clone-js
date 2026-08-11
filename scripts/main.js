@@ -64,11 +64,11 @@ export default {
                 return diferencaAPerson < diferencaBPerson ? ordena : naoOrdena
             })
         }
-        
-        const getProximaPosicao = (orientacao, direcao) => {
+
+        const getProximaPosicao = (orientPerson, direcao) => {
             const proximaPosicao = direcao === 'positivo'
-                ? orientacao + config.velocidadePersonagem
-                : orientacao - config.velocidadePersonagem
+                ? posiPerson[orientPerson] + config.velocidadePersonagem
+                : posiPerson[orientPerson] - config.velocidadePersonagem
 
             for (const obstaculo of data.obstaculos) {
                 const posiObst = pegarPosicaoObj(obstaculo)
@@ -77,16 +77,19 @@ export default {
                 // const batePlataforma = proximaPosicao <= posiObst.fundo // up
                 // const bateLateral = posiPerson.direita + config.velocidadePersonagem >= posiObst.esquerda // right
                 // const batePlataforma = posiPerson.fundo + config.velocidadePersonagem >= posiObst.topo  // down
-                
 
 
-                const colidePlataforma = proximaPosicao <= posiObst.direita
-                const ladoDireitoDoObstaculo = orientacao >= posiObst.direita
-                const mesmaAltura = posiPerson.fundo > posiObst.topo
-                    && posiPerson.topo < posiObst.fundo
+                const orientObst = orientPerson === 'esquerda' ? 'direita' : 'fundo'
+                const faixa = orientPerson === 'esquerda'
+                    ? ['fundo', 'topo'] : ['direita', 'esquerda']
 
-                if (ladoDireitoDoObstaculo && mesmaAltura && colidePlataforma) {
-                    return posiObst.direita
+                const colidePlataforma = proximaPosicao <= posiObst[orientObst]
+                const ladoDireitoDoObstaculo = posiPerson[orientPerson] >= posiObst[orientObst]
+                const mesmaFaixa = posiPerson[faixa[0]] > posiObst[faixa[1]]
+                    && posiPerson[faixa[1]] < posiObst[faixa[0]]
+
+                if (ladoDireitoDoObstaculo && mesmaFaixa && colidePlataforma) {
+                    return posiObst[orientObst]
                 }
             }
             return proximaPosicao
@@ -96,7 +99,7 @@ export default {
 
         if (e.key === 'ArrowLeft') {
             ordenaObstaculo(-1, 1, 'esquerda', 'direita')
-            movimenta(getProximaPosicao(posiPerson.esquerda, 'negativo'), 'left', 0)
+            movimenta(getProximaPosicao('esquerda', 'negativo'), 'left', 0)
             // const proximaPosicao = posiPerson.esquerda - config.velocidadePersonagem
 
             // ordenaObstaculo(-1, 1, 'esquerda', 'direita')
@@ -120,7 +123,7 @@ export default {
 
         if (e.key === 'ArrowRight') {
             ordenaObstaculo(1, -1, 'esquerda', 'direita')
-            movimenta(getProximaPosicao(posiPerson.esquerda, 'positivo'), 'left', 0)
+            movimenta(getProximaPosicao('esquerda', 'positivo'), 'left', 0)
             // const proximaPosicao = posiPerson.esquerda + config.velocidadePersonagem
 
             // ordenaObstaculo(1, -1, 'esquerda', 'direita')
@@ -144,7 +147,7 @@ export default {
 
         if (e.key === 'ArrowUp') {
             ordenaObstaculo(-1, 1, 'fundo', 'topo')
-            movimenta(getProximaPosicao(posiPerson.topo, 'negativo'), 'top', 1)
+            movimenta(getProximaPosicao('topo', 'negativo'), 'top', 1)
 
             // const proximaPosicao = posiPerson.topo - config.velocidadePersonagem
 
@@ -163,13 +166,13 @@ export default {
             //         return
             //     }
             // }
-            
+
             // movimenta(proximaPosicao, 'top', 1)
         }
 
         if (e.key === 'ArrowDown') {
             ordenaObstaculo(1, -1, 'fundo', 'topo')
-            movimenta(getProximaPosicao(posiPerson.topo, 'positivo'), 'top', 1)
+            movimenta(getProximaPosicao('topo', 'positivo'), 'top', 1)
 
             // const proximaPosicao = posiPerson.topo + config.velocidadePersonagem
 
@@ -188,9 +191,9 @@ export default {
             //         return
             //     }
             // }
-            
+
             // movimenta(proximaPosicao, 'top', 1)
         }
-        
+
     }
 }
