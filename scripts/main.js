@@ -41,7 +41,7 @@ export default {
     },
 
     movimentacaoPersonagem(e) {
-        const pegarPosicaoObj = obj => ({
+        const pegarPosicaoObj = (obj) => ({
             esquerda: obj[0],
             direita: obj[0] + obj[2],
             topo: obj[1],
@@ -60,124 +60,137 @@ export default {
 
                 const diferencaAPerson = posiPerson[orientPerson] - posiObstA[orientObst]
                 const diferencaBPerson = posiPerson[orientPerson] - posiObstB[orientObst]
-                // const diferencaAPerson = posiPerson.esquerda - posiObstA.direita
-                // const diferencaBPerson = posiPerson.esquerda - posiObstB.direita
 
                 return diferencaAPerson < diferencaBPerson ? ordena : naoOrdena
             })
         }
+        
+        const getProximaPosicao = (orientacao, direcao) => {
+            const proximaPosicao = direcao === 'positivo'
+                ? orientacao + config.velocidadePersonagem
+                : orientacao - config.velocidadePersonagem
+
+            for (const obstaculo of data.obstaculos) {
+                const posiObst = pegarPosicaoObj(obstaculo)
+
+                // const bateLateral = proximaPosicao <= posiObst.direita // left
+                // const batePlataforma = proximaPosicao <= posiObst.fundo // up
+                // const bateLateral = posiPerson.direita + config.velocidadePersonagem >= posiObst.esquerda // right
+                // const batePlataforma = posiPerson.fundo + config.velocidadePersonagem >= posiObst.topo  // down
+                
+
+
+                const colidePlataforma = proximaPosicao <= posiObst.direita
+                const ladoDireitoDoObstaculo = orientacao >= posiObst.direita
+                const mesmaAltura = posiPerson.fundo > posiObst.topo
+                    && posiPerson.topo < posiObst.fundo
+
+                if (ladoDireitoDoObstaculo && mesmaAltura && colidePlataforma) {
+                    return posiObst.direita
+                }
+            }
+            return proximaPosicao
+        }
 
         const posiPerson = pegarPosicaoObj(data.personagem)
 
-
         if (e.key === 'ArrowLeft') {
-            const proximaPosicao = posiPerson.esquerda - config.velocidadePersonagem
-
             ordenaObstaculo(-1, 1, 'esquerda', 'direita')
+            movimenta(getProximaPosicao(posiPerson.esquerda, 'negativo'), 'left', 0)
+            // const proximaPosicao = posiPerson.esquerda - config.velocidadePersonagem
 
-            for (const obstaculo of data.obstaculos) {
-                const posiObst = pegarPosicaoObj(obstaculo)
+            // ordenaObstaculo(-1, 1, 'esquerda', 'direita')
 
-                const bateLateral = proximaPosicao <= posiObst.direita
-                const ladoDireitoDoObstaculo = posiPerson.esquerda >= posiObst.direita
-                const mesmaAltura = posiPerson.fundo > posiObst.topo
-                    && posiPerson.topo < posiObst.fundo
+            // for (const obstaculo of data.obstaculos) {
+            //     const posiObst = pegarPosicaoObj(obstaculo)
 
-                if (ladoDireitoDoObstaculo && mesmaAltura && bateLateral) {
-                    movimenta(posiObst.direita, 'left', 0)
-                    return
-                }
-            }
+            //     const bateLateral = proximaPosicao <= posiObst.direita
+            //     const ladoDireitoDoObstaculo = posiPerson.esquerda >= posiObst.direita
+            //     const mesmaAltura = posiPerson.fundo > posiObst.topo
+            //         && posiPerson.topo < posiObst.fundo
 
-            movimenta(proximaPosicao, 'left', 0)
+            //     if (ladoDireitoDoObstaculo && mesmaAltura && bateLateral) {
+            //         movimenta(posiObst.direita, 'left', 0)
+            //         return
+            //     }
+            // }
+
+            // movimenta(proximaPosicao, 'left', 0)
         }
 
         if (e.key === 'ArrowRight') {
-            const proximaPosicao = posiPerson.esquerda + config.velocidadePersonagem
-
             ordenaObstaculo(1, -1, 'esquerda', 'direita')
+            movimenta(getProximaPosicao(posiPerson.esquerda, 'positivo'), 'left', 0)
+            // const proximaPosicao = posiPerson.esquerda + config.velocidadePersonagem
 
-            for (const obstaculo of data.obstaculos) {
-                const posiObst = pegarPosicaoObj(obstaculo)
+            // ordenaObstaculo(1, -1, 'esquerda', 'direita')
 
-                const bateLateral = posiPerson.direita + config.velocidadePersonagem >= posiObst.esquerda
-                const ladoEsquerdoDoObstaculo = posiPerson.direita <= posiObst.esquerda
-                const mesmaAltura = posiPerson.fundo > posiObst.topo
-                    && posiPerson.topo < posiObst.fundo
+            // for (const obstaculo of data.obstaculos) {
+            //     const posiObst = pegarPosicaoObj(obstaculo)
 
-                if (ladoEsquerdoDoObstaculo && mesmaAltura && bateLateral) {
-                    data.personagem[0] = posiObst.esquerda - data.personagem[2]
-                    $.personagem.style.left = posiObst.esquerda - data.personagem[2] + 'px';//mudei para esquerda
-                    return
-                }
-            }
+            //     const bateLateral = posiPerson.direita + config.velocidadePersonagem >= posiObst.esquerda
+            //     const ladoEsquerdoDoObstaculo = posiPerson.direita <= posiObst.esquerda
+            //     const mesmaAltura = posiPerson.fundo > posiObst.topo
+            //         && posiPerson.topo < posiObst.fundo
 
-            data.personagem[0] = proximaPosicao
-            $.personagem.style.left = proximaPosicao + 'px';
-        }
+            //     if (ladoEsquerdoDoObstaculo && mesmaAltura && bateLateral) {
+            //         movimenta(posiObst.esquerda - data.personagem[2], 'left', 0)
+            //         return
+            //     }
+            // }
 
-        if (e.key === 'ArrowDown') {
-            const proximaPosicao = posiPerson.topo + config.velocidadePersonagem
-
-            data.obstaculos.sort((a, b) => {
-                const posiObstA = pegarPosicaoObj(a)
-                const posiObstB = pegarPosicaoObj(b)
-
-                const diferencaAPerson = posiPerson.fundo - posiObstA.topo
-                const diferencaBPerson = posiPerson.fundo - posiObstB.topo
-
-                return diferencaAPerson < diferencaBPerson ? 1 : -1
-            })
-
-            for (const obstaculo of data.obstaculos) {
-                const posiObst = pegarPosicaoObj(obstaculo)
-
-                const batePlataforma = posiPerson.fundo + config.velocidadePersonagem >= posiObst.topo
-                const emCimaDoObstaculo = posiPerson.fundo <= posiObst.topo
-                const mesmaColuna = posiPerson.direita > posiObst.esquerda
-                    && posiPerson.esquerda < posiObst.direita
-
-                if (emCimaDoObstaculo && mesmaColuna && batePlataforma) {
-                    data.personagem[1] = posiObst.topo - data.personagem[3]
-                    $.personagem.style.top = posiObst.topo - data.personagem[3] + 'px';
-                    return
-                }
-            }
-
-            data.personagem[1] = proximaPosicao
-            $.personagem.style.top = proximaPosicao + 'px';
+            // movimenta(proximaPosicao, 'left', 0)
         }
 
         if (e.key === 'ArrowUp') {
-            const proximaPosicao = posiPerson.topo - config.velocidadePersonagem
+            ordenaObstaculo(-1, 1, 'fundo', 'topo')
+            movimenta(getProximaPosicao(posiPerson.topo, 'negativo'), 'top', 1)
 
-            data.obstaculos.sort((a, b) => {
-                const posiObstA = pegarPosicaoObj(a)
-                const posiObstB = pegarPosicaoObj(b)
+            // const proximaPosicao = posiPerson.topo - config.velocidadePersonagem
 
-                const diferencaAPerson = posiPerson.fundo - posiObstA.topo
-                const diferencaBPerson = posiPerson.fundo - posiObstB.topo
+            // ordenaObstaculo(-1, 1, 'fundo', 'topo')
 
-                return diferencaAPerson < diferencaBPerson ? -1 : 1
-            })
+            // for (const obstaculo of data.obstaculos) {
+            //     const posiObst = pegarPosicaoObj(obstaculo)
 
-            for (const obstaculo of data.obstaculos) {
-                const posiObst = pegarPosicaoObj(obstaculo)
+            //     const batePlataforma = proximaPosicao <= posiObst.fundo
+            //     const aBaixoDoObstaculo = posiPerson.topo >= posiObst.fundo
+            //     const mesmaColuna = posiPerson.direita > posiObst.esquerda
+            //         && posiPerson.esquerda < posiObst.direita
 
-                const batePlataforma = proximaPosicao <= posiObst.fundo
-                const aBaixoDoObstaculo = posiPerson.topo >= posiObst.fundo
-                const mesmaColuna = posiPerson.direita > posiObst.esquerda
-                    && posiPerson.esquerda < posiObst.direita
-
-                if (aBaixoDoObstaculo && mesmaColuna && batePlataforma) {
-                    data.personagem[1] = posiObst.fundo
-                    $.personagem.style.top = posiObst.fundo + 'px';
-                    return
-                }
-            }
-
-            data.personagem[1] = proximaPosicao
-            $.personagem.style.top = proximaPosicao + 'px';
+            //     if (aBaixoDoObstaculo && mesmaColuna && batePlataforma) {
+            //         movimenta(posiObst.fundo, 'top', 1)
+            //         return
+            //     }
+            // }
+            
+            // movimenta(proximaPosicao, 'top', 1)
         }
+
+        if (e.key === 'ArrowDown') {
+            ordenaObstaculo(1, -1, 'fundo', 'topo')
+            movimenta(getProximaPosicao(posiPerson.topo, 'positivo'), 'top', 1)
+
+            // const proximaPosicao = posiPerson.topo + config.velocidadePersonagem
+
+            // ordenaObstaculo(1, -1, 'fundo', 'topo')
+
+            // for (const obstaculo of data.obstaculos) {
+            //     const posiObst = pegarPosicaoObj(obstaculo)
+
+            //     const batePlataforma = posiPerson.fundo + config.velocidadePersonagem >= posiObst.topo
+            //     const emCimaDoObstaculo = posiPerson.fundo <= posiObst.topo
+            //     const mesmaColuna = posiPerson.direita > posiObst.esquerda
+            //         && posiPerson.esquerda < posiObst.direita
+
+            //     if (emCimaDoObstaculo && mesmaColuna && batePlataforma) {
+            //         movimenta(posiObst.topo - data.personagem[3], 'top', 1)
+            //         return
+            //     }
+            // }
+            
+            // movimenta(proximaPosicao, 'top', 1)
+        }
+        
     }
 }
