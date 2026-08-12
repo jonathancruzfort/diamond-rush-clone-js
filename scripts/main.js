@@ -48,6 +48,13 @@ export default {
             fundo: obj[1] + obj[3],
         })
 
+        const getPosicao = (obj) => ({
+            esquerda: obj[0],
+            // direita: obj[0] + obj[2],
+            topo: obj[1],
+            // fundo: obj[1] + obj[3],
+        })
+
         const movimenta = (proximaPosicao, orientacao, indice) => {
             data.personagem[indice] = proximaPosicao
             $.personagem.style[orientacao] = proximaPosicao + 'px';
@@ -99,11 +106,36 @@ export default {
             return proximaPosicao
         }
 
+        const movimenta2 = (direcao) => {
+            const eixo = {
+                x: [0, 'left'],
+                y: [1, 'top'],
+            }
+
+            const proximaPosicao = getProximaPosicao2(direcao)
+            const selecaoEixo = 3
+            data.personagem[eixo[999]] = proximaPosicao
+            $.personagem.style[orientacao] = proximaPosicao + 'px';
+        }
+
+        const getProximaPosicao2 = (direcao) => {
+            const calculo = {
+                direita: data.personagem[0] + config.velPerson,
+                esquerda: data.personagem[0] - config.velPerson,
+                baixo: data.personagem[1] + config.velPerson,
+                cima: data.personagem[1] - config.velPerson,
+            }
+
+            let proximaPosicao = calculo[direcao]
+            return proximaPosicao
+        }
+
         const posiPerson = pegarPosicaoObj(data.personagem)
 
         if (e.key === 'ArrowLeft') {
             ordenaObstaculo(-1, 1, 'esquerda', 'direita')
-            movimenta(getProximaPosicao('esquerda', 'negativo'), 'left', 0)
+            // movimenta(getProximaPosicao('esquerda', 'negativo'), 'left', 0)
+            movimenta2('esquerda')
             // const proximaPosicao = posiPerson.esquerda - config.velocidadePersonagem
 
             // ordenaObstaculo(-1, 1, 'esquerda', 'direita')

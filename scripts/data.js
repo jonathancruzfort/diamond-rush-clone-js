@@ -1,6 +1,8 @@
 // left, top, largura, altura
 export default {
-    personagem:[118, 280, 20, 20],
+              //110 = 120 - 20 + 10
+              //130 = 120 + 10
+    personagem:[120, 200, 20, 20],
     obstaculos: [
         // [290, 168, 103, 30],
         // [180, 165, 103, 30],
