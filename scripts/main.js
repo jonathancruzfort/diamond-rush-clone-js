@@ -50,9 +50,9 @@ export default {
 
         const getPosicao = (obj) => ({
             esquerda: obj[0],
-            // direita: obj[0] + obj[2],
+            direita: obj[0] + obj[2],
             topo: obj[1],
-            // fundo: obj[1] + obj[3],
+            fundo: obj[1] + obj[3],
         })
 
         const movimenta = (proximaPosicao, orientacao, indice) => {
@@ -98,7 +98,7 @@ export default {
                     && posiPerson[faixa[1]] < posiObst[faixa[0]]
 
                 console.log(naDirecaoDoObst, orientObst);
-                    
+
                 if (naDirecaoDoObst && mesmaFaixa && colidePlataforma) {
                     return posiObst[orientObst]
                 }
@@ -131,18 +131,31 @@ export default {
             return verificaColisao(incrementVel[direcao], direcao)
         }
 
+        const getFaceObst = {
+            direita: 'esquerda',
+            esquerda: 'direita',
+            baixo: 'cima',
+            cima: 'baixo',
+        }
+
         const verificaColisao = (proximaPosicao, direcao) => {
             for (const obst of data.obstaculos) {
                 const posiObst = getPosicao(obst)
+                const faceObst = getFaceObst[direcao]
 
+                console.log(posiPerson, direcao);
+                
                 const alinhadoEixoObst = true
+                //     const mesmaAltura = posiPerson.fundo > posiObst.topo
+            //         && posiPerson.topo < posiObst.fundo
                 const emDirecaoObst = true
                 const colideObst = true
 
                 if (alinhadoEixoObst && emDirecaoObst && colideObst) {
-                    console.log(posiObst[direcao]);
-                    
-                    return proximaPosicao + 20
+                    // console.log(posiObst[faceObst]);
+                    // console.log(posiObst);
+
+                    // return posiObst[faceObst] - data.personagem[2]
                 }
             }
 
