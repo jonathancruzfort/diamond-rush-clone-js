@@ -138,6 +138,13 @@ export default {
             cima: 'baixo',
         }
 
+        const getAlinhamento = {
+            direita: ['topo', 'fundo'],
+            esquerda: ['topo', 'fundo'],
+            baixo: ['esquerda', 'direita'],
+            cima: ['esquerda', 'direita'],
+        }
+
         const verificaColisao = (proximaPosicao, direcao) => {
             for (const obst of data.obstaculos) {
                 const posiObst = getPosicao(obst)
@@ -145,7 +152,10 @@ export default {
 
                 console.log(posiPerson, direcao);
                 
-                const alinhadoEixoObst = true
+                const alinhadoEixoObst = posiPerson[getAlinhamento[direcao][0]] < posiObst[getAlinhamento[direcao][1]]
+                    && posiPerson[getAlinhamento[direcao][1]] > posiObst[getAlinhamento[direcao][0]]
+                    console.log(alinhadoEixoObst);
+                    
                 //     const mesmaAltura = posiPerson.fundo > posiObst.topo
             //         && posiPerson.topo < posiObst.fundo
                 const emDirecaoObst = true
