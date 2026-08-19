@@ -150,15 +150,17 @@ export default {
                 const posiObst = getPosicao(obst)
                 const faceObst = getFaceObst[direcao]
 
-                console.log(posiPerson, direcao);
+                // console.log(posiPerson, direcao);
                 
                 const alinhadoEixoObst = posiPerson[getAlinhamento[direcao][0]] < posiObst[getAlinhamento[direcao][1]]
                     && posiPerson[getAlinhamento[direcao][1]] > posiObst[getAlinhamento[direcao][0]]
-                    console.log(alinhadoEixoObst);
-                    
-                //     const mesmaAltura = posiPerson.fundo > posiObst.topo
-            //         && posiPerson.topo < posiObst.fundo
-                const emDirecaoObst = true
+                
+                const emDirecaoObst = posiPerson[direcao] >= posiObst[faceObst]
+                console.log(emDirecaoObst);
+                //const ladoEsquerdoDoObstaculo = posiPerson.direita <= posiObst.esquerda
+                //const ladoDireitoDoObstaculo = posiPerson.esquerda >= posiObst.direita
+                
+
                 const colideObst = true
 
                 if (alinhadoEixoObst && emDirecaoObst && colideObst) {
