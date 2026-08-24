@@ -40,243 +40,118 @@ export default {
         container.appendChild(novaDiv);
     },
 
-    movimentacaoPersonagem(e) {
-        const pegarPosicaoObj = (obj) => ({
-            esquerda: obj[0],
-            direita: obj[0] + obj[2],
-            topo: obj[1],
-            fundo: obj[1] + obj[3],
-        })
+    movimentacaoPersonagem(direcao) {
+        const posiPerson = this.computaPosicao(data.personagem)
+        // const novaPosiPerson = this.getNovaPosicao(direcao, { ...posiPerson })
+        const novaPosiPerson = this.getNovaPosicao2(direcao, data.personagem)
 
-        const getPosicao = (obj) => ({
-            esquerda: obj[0],
-            direita: obj[0] + obj[2],
-            topo: obj[1],
-            fundo: obj[1] + obj[3],
-        })
+        console.log(novaPosiPerson);
+        
 
-        const movimenta = (proximaPosicao, orientacao, indice) => {
-            data.personagem[indice] = proximaPosicao
-            $.personagem.style[orientacao] = proximaPosicao + 'px';
+        // this.movimenta(data.personagem, novaPosiPerson)
+    },
+
+    computaPosicao(data) {
+        return {
+            esquerda: data[0],
+            cima: data[1],
+            direita: data[0] + data[2],
+            baixo: data[1] + data[3],
         }
+    },
 
-        const ordenaObstaculo = (ordena, naoOrdena, orientPerson, orientObst) => {
-            data.obstaculos.sort((a, b) => {
-                const posiObstA = pegarPosicaoObj(a)
-                const posiObstB = pegarPosicaoObj(b)
+    getNovaPosicao(direcao, posiAtual) {
+        const proximaPosicao = this.getProximaPosicao(direcao, posiAtual)
+        const colisao = this.colideObstaculo(direcao, proximaPosicao)
 
-                const diferencaAPerson = posiPerson[orientPerson] - posiObstA[orientObst]
-                const diferencaBPerson = posiPerson[orientPerson] - posiObstB[orientObst]
+        console.log(colisao);
 
-                return diferencaAPerson < diferencaBPerson ? ordena : naoOrdena
-            })
+        return colisao ? colisao : proximaPosicao
+    },
+    getNovaPosicao2(direcao, posiAtual) {
+        const proximaPosicao = this.getProximaPosicao2(direcao, posiAtual)
+        // const colisao = this.colideObstaculo(direcao, proximaPosicao)
+
+        // console.log(colisao);
+
+        // return colisao ? colisao : proximaPosicao
+    },
+
+    getProximaPosicao(direcao, posiAtual) {
+        const direcaoContraria = this.getDirecaoContraria()
+        if (direcao === 'esquerda' || direcao === 'cima') {
+            posiAtual[direcao] -= config.velPerson
+            posiAtual[direcaoContraria[direcao]] -= config.velPerson
+        } else {
+            posiAtual[direcao] += config.velPerson
+            posiAtual[direcaoContraria[direcao]] += config.velPerson
         }
-
-        const getProximaPosicao = (orientPerson, direcao) => {
-            const proximaPosicao = direcao === 'positivo'
-                ? posiPerson[orientPerson] + config.velocidadePersonagem
-                : posiPerson[orientPerson] - config.velocidadePersonagem
-
-            for (const obstaculo of data.obstaculos) {
-                const posiObst = pegarPosicaoObj(obstaculo)
-
-                // const bateLateral = proximaPosicao <= posiObst.direita // left
-                // const batePlataforma = proximaPosicao <= posiObst.fundo // up
-                // const bateLateral = posiPerson.direita + config.velocidadePersonagem >= posiObst.esquerda // right
-                // const batePlataforma = posiPerson.fundo + config.velocidadePersonagem >= posiObst.topo  // down
-
-
-                const orientObst = orientPerson === 'esquerda' ? 'direita' : 'fundo'
-                const faixa = orientPerson === 'esquerda'
-                    ? ['fundo', 'topo'] : ['direita', 'esquerda']
-
-                const colidePlataforma = direcao === 'negativo'
-                    ? proximaPosicao <= posiObst[orientObst]
-                    : posiPerson[faixa[0]] + config.velocidadePersonagem >= posiObst[orientPerson]
-                const naDirecaoDoObst = posiPerson[orientObst] >= posiObst[orientObst]
-                const mesmaFaixa = posiPerson[faixa[0]] > posiObst[faixa[1]]
-                    && posiPerson[faixa[1]] < posiObst[faixa[0]]
-
-                console.log(naDirecaoDoObst, orientObst);
-
-                if (naDirecaoDoObst && mesmaFaixa && colidePlataforma) {
-                    return posiObst[orientObst]
-                }
-            }
-            return proximaPosicao
+        return posiAtual
+    },
+    getProximaPosicao2(direcao, posiAtual) {
+        console.log(posiAtual);
+        
+        // const direcaoContraria = this.getDirecaoContraria()
+        if (direcao === 'esquerda' || direcao === 'cima') {
+            posiAtual[direcao] -= config.velPerson
+        } else {
+            posiAtual[direcao] += config.velPerson
         }
+        // return posiAtual
+    },
 
-        const movimenta2 = (direcao) => {
-            const eixo = {
-                x: [0, 'left'],
-                y: [1, 'top'],
-            }
-
-            const proximaPosicao = getProximaPosicao2(direcao)
-            const selecaoEixo = direcao === 'esquerda' ||
-                direcao === 'direita' ? eixo.x : eixo.y
-
-            data.personagem[selecaoEixo[0]] = proximaPosicao
-            $.personagem.style[selecaoEixo[1]] = proximaPosicao + 'px';
-        }
-
-        const getProximaPosicao2 = (direcao) => {
-            const incrementVel = {
-                direita: data.personagem[0] + config.velPerson,
-                esquerda: data.personagem[0] - config.velPerson,
-                baixo: data.personagem[1] + config.velPerson,
-                cima: data.personagem[1] - config.velPerson,
-            }
-
-            return verificaColisao(incrementVel[direcao], direcao)
-        }
-
-        const getFaceObst = {
+    getDirecaoContraria(direcao) {
+        return {
             direita: 'esquerda',
             esquerda: 'direita',
-            baixo: 'cima',
             cima: 'baixo',
+            baixo: 'cima',
         }
+    },
 
-        const getAlinhamento = {
-            direita: ['topo', 'fundo'],
-            esquerda: ['topo', 'fundo'],
-            baixo: ['esquerda', 'direita'],
-            cima: ['esquerda', 'direita'],
-        }
+    colideObstaculo(direcao, proximaPosicao) {
+        // this.ordenaObstaculo()
+        for (const obstaculo of data.obstaculos) {
+            const posiObst = this.computaPosicao(obstaculo)
+            const direcaoContraria = this.getDirecaoContraria()[direcao]
 
-        const verificaColisao = (proximaPosicao, direcao) => {
-            for (const obst of data.obstaculos) {
-                const posiObst = getPosicao(obst)
-                const faceObst = getFaceObst[direcao]
+            // console.log(direcao);
+            // console.log('obstaculo', posiObst);
+            // console.log('personagem', proximaPosicao);
 
-                // console.log(posiPerson, direcao);
-                
-                const alinhadoEixoObst = posiPerson[getAlinhamento[direcao][0]] < posiObst[getAlinhamento[direcao][1]]
-                    && posiPerson[getAlinhamento[direcao][1]] > posiObst[getAlinhamento[direcao][0]]
-                
-                const emDirecaoObst = posiPerson[direcao] >= posiObst[faceObst]
-                console.log(emDirecaoObst);
-                //const ladoEsquerdoDoObstaculo = posiPerson.direita <= posiObst.esquerda
-                //const ladoDireitoDoObstaculo = posiPerson.esquerda >= posiObst.direita
-                
+            console.log(proximaPosicao[direcao]);
+            console.log(posiObst[direcaoContraria]);
 
-                const colideObst = true
+            if (proximaPosicao[direcao] >= posiObst[direcaoContraria]) {
+                const novaPosicao = { ...proximaPosicao }
+                novaPosicao[direcao] = posiObst[direcaoContraria]
 
-                if (alinhadoEixoObst && emDirecaoObst && colideObst) {
-                    // console.log(posiObst[faceObst]);
-                    // console.log(posiObst);
-
-                    // return posiObst[faceObst] - data.personagem[2]
-                }
+                return novaPosicao
             }
-
-            return proximaPosicao
+            // return proximaPosicao
         }
 
-        const posiPerson = pegarPosicaoObj(data.personagem)
 
-        if (e.key === 'ArrowLeft') {
-            ordenaObstaculo(-1, 1, 'esquerda', 'direita')
-            // movimenta(getProximaPosicao('esquerda', 'negativo'), 'left', 0)
-            movimenta2('esquerda')
-            // const proximaPosicao = posiPerson.esquerda - config.velocidadePersonagem
+        return false
+    },
 
-            // ordenaObstaculo(-1, 1, 'esquerda', 'direita')
+    ordenaObstaculo(ordena, naoOrdena, orientPerson, orientObst) {
+        data.obstaculos.sort((a, b) => {
+            const posiObstA = pegarPosicaoObj(a)
+            const posiObstB = pegarPosicaoObj(b)
 
-            // for (const obstaculo of data.obstaculos) {
-            //     const posiObst = pegarPosicaoObj(obstaculo)
+            const diferencaAPerson = posiPerson[orientPerson] - posiObstA[orientObst]
+            const diferencaBPerson = posiPerson[orientPerson] - posiObstB[orientObst]
 
-            //     const bateLateral = proximaPosicao <= posiObst.direita
-            //     const ladoDireitoDoObstaculo = posiPerson.esquerda >= posiObst.direita
-            //     const mesmaAltura = posiPerson.fundo > posiObst.topo
-            //         && posiPerson.topo < posiObst.fundo
+            return diferencaAPerson < diferencaBPerson ? ordena : naoOrdena
+        })
+    },
 
-            //     if (ladoDireitoDoObstaculo && mesmaAltura && bateLateral) {
-            //         movimenta(posiObst.direita, 'left', 0)
-            //         return
-            //     }
-            // }
+    movimenta(obj, novaPosicao) {
+        obj[0] = novaPosicao.esquerda
+        obj[1] = novaPosicao.cima
+        $.personagem.style.left = novaPosicao.esquerda + 'px';
+        $.personagem.style.top = novaPosicao.cima + 'px';
+    },
 
-            // movimenta(proximaPosicao, 'left', 0)
-        }
-
-        if (e.key === 'ArrowRight') {
-            ordenaObstaculo(1, -1, 'esquerda', 'direita')
-            // movimenta(getProximaPosicao('esquerda', 'positivo'), 'left', 0)
-            movimenta2('direita')
-            // const proximaPosicao = posiPerson.esquerda + config.velocidadePersonagem
-
-            // ordenaObstaculo(1, -1, 'esquerda', 'direita')
-
-            // for (const obstaculo of data.obstaculos) {
-            //     const posiObst = pegarPosicaoObj(obstaculo)
-
-            //     const bateLateral = posiPerson.direita + config.velocidadePersonagem >= posiObst.esquerda
-            //     const ladoEsquerdoDoObstaculo = posiPerson.direita <= posiObst.esquerda
-            //     const mesmaAltura = posiPerson.fundo > posiObst.topo
-            //         && posiPerson.topo < posiObst.fundo
-
-            //     if (ladoEsquerdoDoObstaculo && mesmaAltura && bateLateral) {
-            //         movimenta(posiObst.esquerda - data.personagem[2], 'left', 0)
-            //         return
-            //     }
-            // }
-
-            // movimenta(proximaPosicao, 'left', 0)
-        }
-
-        if (e.key === 'ArrowUp') {
-            ordenaObstaculo(-1, 1, 'fundo', 'topo')
-            // movimenta(getProximaPosicao('topo', 'negativo'), 'top', 1)
-            movimenta2('cima')
-
-            // const proximaPosicao = posiPerson.topo - config.velocidadePersonagem
-
-            // ordenaObstaculo(-1, 1, 'fundo', 'topo')
-
-            // for (const obstaculo of data.obstaculos) {
-            //     const posiObst = pegarPosicaoObj(obstaculo)
-
-            //     const batePlataforma = proximaPosicao <= posiObst.fundo
-            //     const aBaixoDoObstaculo = posiPerson.topo >= posiObst.fundo
-            //     const mesmaColuna = posiPerson.direita > posiObst.esquerda
-            //         && posiPerson.esquerda < posiObst.direita
-
-            //     if (aBaixoDoObstaculo && mesmaColuna && batePlataforma) {
-            //         movimenta(posiObst.fundo, 'top', 1)
-            //         return
-            //     }
-            // }
-
-            // movimenta(proximaPosicao, 'top', 1)
-        }
-
-        if (e.key === 'ArrowDown') {
-            ordenaObstaculo(1, -1, 'fundo', 'topo')
-            // movimenta(getProximaPosicao('topo', 'positivo'), 'top', 1)
-            movimenta2('baixo')
-
-            // const proximaPosicao = posiPerson.topo + config.velocidadePersonagem
-
-            // ordenaObstaculo(1, -1, 'fundo', 'topo')
-
-            // for (const obstaculo of data.obstaculos) {
-            //     const posiObst = pegarPosicaoObj(obstaculo)
-
-            //     const batePlataforma = posiPerson.fundo + config.velocidadePersonagem >= posiObst.topo
-            //     const emCimaDoObstaculo = posiPerson.fundo <= posiObst.topo
-            //     const mesmaColuna = posiPerson.direita > posiObst.esquerda
-            //         && posiPerson.esquerda < posiObst.direita
-
-            //     if (emCimaDoObstaculo && mesmaColuna && batePlataforma) {
-            //         movimenta(posiObst.topo - data.personagem[3], 'top', 1)
-            //         return
-            //     }
-            // }
-
-            // movimenta(proximaPosicao, 'top', 1)
-        }
-
-    }
 }
