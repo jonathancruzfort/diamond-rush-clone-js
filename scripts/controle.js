@@ -1,4 +1,4 @@
-import main from "./main.js"
+import personagem from "./personagem.js"
 
 export default {
     input(e) {
@@ -7,18 +7,18 @@ export default {
     },
 
     ArrowUp() {
-        main.movimentacaoPersonagem('cima')
+        personagem.movimenta('cima')
     },
 
     ArrowDown() {
-        main.movimentacaoPersonagem('baixo')
+        personagem.movimenta('baixo')
     },
 
     ArrowRight() {
-        main.movimentacaoPersonagem('direita')
+        personagem.movimenta('direita')
     },
 
     ArrowLeft() {
-        main.movimentacaoPersonagem('esquerda')
+        personagem.movimenta('esquerda')
     },
 }
