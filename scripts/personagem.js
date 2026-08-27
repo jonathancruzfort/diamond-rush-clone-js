@@ -5,7 +5,10 @@ import $ from './elements.js'
 export default {
     movimenta(direcao) {
         const novaPosicao = this.getNovaPosicao(direcao)
+        this.updatePersonagem(novaPosicao)
+    },
 
+    updatePersonagem(novaPosicao) {
         data.personagem = novaPosicao
         $.personagem.style.left = novaPosicao[0] + 'px'
         $.personagem.style.top = novaPosicao[1] + 'px'
@@ -13,66 +16,75 @@ export default {
 
     getNovaPosicao(direcao) {
         let novaPosicao = [...data.personagem]
-        if (direcao === 'esquerda') {
-            novaPosicao[0] -= config.velPerson
-        }
-        if (direcao === 'direita') {
-            novaPosicao[0] += config.velPerson
-        }
-        if (direcao === 'cima') {
-            novaPosicao[1] -= config.velPerson
-        }
-        if (direcao === 'baixo') {
-            novaPosicao[1] += config.velPerson
-        }
 
-        novaPosicao = this.verificaColisao(direcao, novaPosicao)
+        this.computaPosicao(direcao, novaPosicao)
+        this.computaColisao(direcao, novaPosicao)
 
         return novaPosicao
+    },
+
+    computaColisao(direcao, novaPosicao) {
+        this.ordenaObstaculos()
+        this.verificaColisao(direcao, novaPosicao)
     },
 
     verificaColisao(direcao, novaPosicao) {
-        this.ordenaObstaculos()
+        for (const obst of data.obstaculos) {
+            const colide = this.colide(direcao, novaPosicao, obst)
 
-        for (const obs of data.obstaculos) {
-            const alinhadoEixoY = this.getAlinhamentoY(direcao, novaPosicao, obs)
-            const alinhadoEixoX = this.getAlinhamentoX(direcao, novaPosicao, obs)
-
-            if (alinhadoEixoX && alinhadoEixoY) {
-                if (direcao === 'direita') novaPosicao[0] = obs[0] - novaPosicao[2]
-                if (direcao === 'esquerda') novaPosicao[0] = obs[0] + obs[2]
-                if (direcao === 'baixo') novaPosicao[1] = obs[1] - novaPosicao[3]
-                if (direcao === 'cima') novaPosicao[1] = obs[1] + obs[3]
-                return novaPosicao
+            if (colide) {
+                this.colaNoObstaculo(direcao, novaPosicao, obst)
+                return
             }
         }
-
-        return novaPosicao
     },
 
-    ordenaObstaculos() {
-
+    computaPosicao(direcao, novaPosicao) {
+        const computa = {
+            direita: () => novaPosicao[0] += config.velPerson,
+            esquerda: () => novaPosicao[0] -= config.velPerson,
+            baixo: () => novaPosicao[1] += config.velPerson,
+            cima: () => novaPosicao[1] -= config.velPerson,
+        }
+        computa[direcao]()
     },
 
-    getAlinhamentoY(direcao, novaPosicao, obs) {
+    colaNoObstaculo(direcao, novaPosicao, obst) {
+        const colaPosicao = {
+            direita: () => novaPosicao[0] = obst[0] - novaPosicao[2],
+            esquerda: () => novaPosicao[0] = obst[0] + obst[2],
+            baixo: () => novaPosicao[1] = obst[1] - novaPosicao[3],
+            cima: () => novaPosicao[1] = obst[1] + obst[3],
+        }
+        colaPosicao[direcao]()
+    },
+
+    ordenaObstaculo(ordena, naoOrdena, orientPerson, orientObst) {
+        // data.obstaculos.sort((a, b) => {
+        //     const posiObstA = pegarPosicaoObj(a)
+        //     const posiObstB = pegarPosicaoObj(b)
+
+        //     const diferencaAPerson = posiPerson[orientPerson] - posiObstA[orientObst]
+        //     const diferencaBPerson = posiPerson[orientPerson] - posiObstB[orientObst]
+
+        //     return diferencaAPerson < diferencaBPerson ? ordena : naoOrdena
+        // })
+    },
+
+    colide(direcao, novaPosicao, obst) {
         if (direcao === 'direita' || direcao === 'esquerda') {
-            return novaPosicao[1] + novaPosicao[3] > obs[1]
-                && novaPosicao[1] < obs[1] + obs[3] ? true : false
+            return novaPosicao[1] + novaPosicao[3] > obst[1]
+                && novaPosicao[1] < obst[1] + obst[3]
+                && novaPosicao[0] + novaPosicao[2] > obst[0]
+                && novaPosicao[0] < obst[0] + obst[2]
+                ? true : false
         } else {
-            return novaPosicao[0] + novaPosicao[2] > obs[0]
-                && novaPosicao[0] < obs[0] + obs[2] ? true : false
+            return novaPosicao[0] + novaPosicao[2] > obst[0]
+                && novaPosicao[0] < obst[0] + obst[2]
+                && novaPosicao[1] + novaPosicao[3] > obst[1]
+                && novaPosicao[1] < obst[1] + obst[3]
+                ? true : false
         }
     },
-
-    getAlinhamentoX(direcao, novaPosicao, obs) {
-        if (direcao === 'direita' || direcao === 'esquerda') {
-            return novaPosicao[0] + novaPosicao[2] > obs[0]
-                && novaPosicao[0] < obs[0] + obs[2] ? true : false
-        } else {
-            return novaPosicao[1] + novaPosicao[3] > obs[1]
-                && novaPosicao[1] < obs[1] + obs[3] ? true : false
-        }
-    },
-
 
 }
