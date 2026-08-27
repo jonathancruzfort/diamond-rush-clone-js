@@ -59,7 +59,7 @@ export default {
         colaPosicao[direcao]()
     },
 
-    ordenaObstaculo(ordena, naoOrdena, orientPerson, orientObst) {
+    ordenaObstaculos(ordena, naoOrdena, orientPerson, orientObst) {
         // data.obstaculos.sort((a, b) => {
         //     const posiObstA = pegarPosicaoObj(a)
         //     const posiObstB = pegarPosicaoObj(b)
