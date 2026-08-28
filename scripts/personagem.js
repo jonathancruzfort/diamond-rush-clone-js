@@ -24,7 +24,7 @@ export default {
     },
 
     computaColisao(direcao, novaPosicao) {
-        this.ordenaObstaculos()
+        this.ordenaObstaculos(direcao, novaPosicao)
         this.verificaColisao(direcao, novaPosicao)
     },
 
@@ -59,7 +59,41 @@ export default {
         colaPosicao[direcao]()
     },
 
-    ordenaObstaculos(ordena, naoOrdena, orientPerson, orientObst) {
+    ordenaObstaculos(direcao, novaPosicao) {
+        data.obstaculos.sort((a, b) => {
+
+            if (direcao === 'direita') {
+                const diferencaAPerson = a[0] - (novaPosicao[0] + novaPosicao[2])
+                const diferencaBPerson = b[0] - (novaPosicao[0] + novaPosicao[2])
+
+                return diferencaAPerson < diferencaBPerson ? -1 : 1
+            }
+            
+            if (direcao === 'esquerda') {
+                const diferencaAPerson = a[0] - (novaPosicao[0] + novaPosicao[2])
+                const diferencaBPerson = b[0] - (novaPosicao[0] + novaPosicao[2])
+
+                return diferencaAPerson > diferencaBPerson ? -1 : 1
+            }
+            
+            if (direcao === 'cima') {
+                const diferencaAPerson = a[1] - (novaPosicao[1] + novaPosicao[3])
+                const diferencaBPerson = b[1] - (novaPosicao[1] + novaPosicao[3])
+
+                return diferencaAPerson > diferencaBPerson ? -1 : 1
+            }
+
+            if (direcao === 'baixo') {
+                const diferencaAPerson = a[1] - (novaPosicao[1] + novaPosicao[3])
+                const diferencaBPerson = b[1] - (novaPosicao[1] + novaPosicao[3])
+
+                return diferencaAPerson < diferencaBPerson ? -1 : 1
+            }
+
+
+        })
+
+        // ordenaObstaculos(ordena, naoOrdena, orientPerson, orientObst) {
         // data.obstaculos.sort((a, b) => {
         //     const posiObstA = pegarPosicaoObj(a)
         //     const posiObstB = pegarPosicaoObj(b)
