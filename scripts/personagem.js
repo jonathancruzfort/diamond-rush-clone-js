@@ -61,48 +61,23 @@ export default {
 
     ordenaObstaculos(direcao, novaPosicao) {
         data.obstaculos.sort((a, b) => {
-
-            if (direcao === 'direita') {
-                const diferencaAPerson = a[0] - (novaPosicao[0] + novaPosicao[2])
-                const diferencaBPerson = b[0] - (novaPosicao[0] + novaPosicao[2])
-
-                return diferencaAPerson < diferencaBPerson ? -1 : 1
-            }
-            
-            if (direcao === 'esquerda') {
-                const diferencaAPerson = a[0] - (novaPosicao[0] + novaPosicao[2])
-                const diferencaBPerson = b[0] - (novaPosicao[0] + novaPosicao[2])
-
-                return diferencaAPerson > diferencaBPerson ? -1 : 1
-            }
-            
-            if (direcao === 'cima') {
-                const diferencaAPerson = a[1] - (novaPosicao[1] + novaPosicao[3])
-                const diferencaBPerson = b[1] - (novaPosicao[1] + novaPosicao[3])
-
-                return diferencaAPerson > diferencaBPerson ? -1 : 1
-            }
-
-            if (direcao === 'baixo') {
-                const diferencaAPerson = a[1] - (novaPosicao[1] + novaPosicao[3])
-                const diferencaBPerson = b[1] - (novaPosicao[1] + novaPosicao[3])
-
-                return diferencaAPerson < diferencaBPerson ? -1 : 1
-            }
-
-
+            if (direcao === 'direita')
+                return this.getDistanciaPersonObs(novaPosicao, a, b, 0, 1, -1)
+            if (direcao === 'esquerda')
+                return this.getDistanciaPersonObs(novaPosicao, a, b, 0, -1, 1)
+            if (direcao === 'cima')
+                return this.getDistanciaPersonObs(novaPosicao, a, b, 1, -1, 1)
+            if (direcao === 'baixo')
+                return this.getDistanciaPersonObs(novaPosicao, a, b, 1, 1, -1)
         })
+    },
 
-        // ordenaObstaculos(ordena, naoOrdena, orientPerson, orientObst) {
-        // data.obstaculos.sort((a, b) => {
-        //     const posiObstA = pegarPosicaoObj(a)
-        //     const posiObstB = pegarPosicaoObj(b)
+    getDistanciaPersonObs(novaPosicao, a, b, orientacao, ordena, naoOrdena) {
+        const tamanhoObs = novaPosicao[orientacao] + novaPosicao[orientacao + 2]
+        const diferencaAPerson = a[orientacao] - tamanhoObs
+        const diferencaBPerson = b[orientacao] - tamanhoObs
 
-        //     const diferencaAPerson = posiPerson[orientPerson] - posiObstA[orientObst]
-        //     const diferencaBPerson = posiPerson[orientPerson] - posiObstB[orientObst]
-
-        //     return diferencaAPerson < diferencaBPerson ? ordena : naoOrdena
-        // })
+        return diferencaAPerson > diferencaBPerson ? ordena : naoOrdena
     },
 
     colide(direcao, novaPosicao, obst) {
