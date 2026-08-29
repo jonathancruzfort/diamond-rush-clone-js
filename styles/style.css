@@ -26,10 +26,28 @@
     background-color: rgb(49, 58, 34);
 }
 
+.pedra {
+    background-color: rgb(235, 199, 99);
+    border-radius: 50%;
+    /* Nome, Duração, Curva de Aceleração e Comportamento Final */
+    animation: cair 12.2s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards;
+}
+
 .personagem {
     background-color: blueviolet;
 }
 
 .pos-abs {
     position: absolute;
+}
+
+@keyframes cair {
+    0% {
+        transform: translateY(0);
+    }
+
+    100% {
+        /* Para no chão */
+        transform: translateY(300px);
+    }
 }

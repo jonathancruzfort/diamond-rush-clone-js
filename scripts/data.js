@@ -1,6 +1,9 @@
 // left, top, largura, altura
 export default {
     personagem:[120, 200, 20, 20],
+    pedras:[
+        [40, 20, 20, 20]
+    ],
     obstaculos: [
         [-1, 0, 2, 394], // esquerda
         [443, 0, 2, 394], // direita
