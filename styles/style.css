@@ -29,8 +29,11 @@
 .pedra {
     background-color: rgb(235, 199, 99);
     border-radius: 50%;
+}
+
+.pedra-caindo {
     /* Nome, Duração, Curva de Aceleração e Comportamento Final */
-    animation: cair 12.2s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards;
+    animation: gravidade 2s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards;
 }
 
 .personagem {
@@ -41,13 +44,13 @@
     position: absolute;
 }
 
-@keyframes cair {
+@keyframes gravidade {
     0% {
         transform: translateY(0);
     }
 
     100% {
         /* Para no chão */
-        transform: translateY(300px);
+        transform: translateY(500px);
     }
 }

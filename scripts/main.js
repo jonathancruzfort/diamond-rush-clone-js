@@ -32,11 +32,15 @@ export default {
         }
     },
 
-    renderizarDiv(container, classeCss = '', left, top, largura, altura) {
+    renderizarDiv(container, classeCss = '', left, top, largura, altura, id) {
         const novaDiv = document.createElement('div');
 
         if (classeCss) {
             novaDiv.className = classeCss;
+        }
+
+        if (classeCss.includes('pedra')) {
+            novaDiv.dataset.pedra = id
         }
 
         novaDiv.style.left = `${Math.round(left)}px`;
