@@ -11,9 +11,12 @@ export default {
     movimentaPedra(direcao, pedra) {
         const novaPosicao = this.getNovaPosicaoPedra(direcao, pedra)
         this.updatePedra(novaPosicao, pedra)
+        this.aplicaGravidade(pedra)
     },
 
     updatePersonagem(novaPosicao) {
+        console.log(novaPosicao);
+        
         data.personagem = novaPosicao
         $.personagem.style.left = novaPosicao[0] + 'px'
         $.personagem.style.top = novaPosicao[1] + 'px'
@@ -25,8 +28,6 @@ export default {
         
         pedra[0] = novaPosicao[0]
         pedra[1] = novaPosicao[1]
-
-        console.log(data.pedras[0]);
         
         $pedra.style.left = novaPosicao[0] + 'px'
         $pedra.style.top = novaPosicao[1] + 'px'
@@ -45,8 +46,6 @@ export default {
         let novaPosicao = [...pedra]
 
         this.computaPosicao(direcao, novaPosicao)
-        // console.log(novaPosicao);
-        
         this.ordenaObstaculos(direcao, novaPosicao)
         this.verificaColisaoObst(direcao, novaPosicao)
 
@@ -149,16 +148,19 @@ export default {
         // const proximaY = obj[1] + 10
         // const objFuturo = [obj[0], proximaY, obj[2], obj[3], obj[4]]
 
-        obj[1] += 10
+        let novaPosicao = [...obj]
+        novaPosicao[1] += 5 
+
         for (const obst of data.obstaculos) {
-            if (this.colide('baixo', obj, obst)) {
+            if (this.colide('baixo', novaPosicao, obst)) {
                 this.colaNoObstaculo('baixo', obj, obst)
                 return
             }
         }
 
-        this.updatePedra(obj)
-        requestAnimationFrame(t => this.aplicaGravidade(obj))
+
+        this.updatePedra(novaPosicao)
+        requestAnimationFrame(t => this.aplicaGravidade(novaPosicao))
     },
 
 }
