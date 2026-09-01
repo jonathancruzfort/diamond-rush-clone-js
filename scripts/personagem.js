@@ -4,7 +4,7 @@ import $ from './elements.js'
 
 export default {
     movimenta(direcao) {
-        const novaPosicao = this.getNovaPosicao(direcao)
+        const novaPosicao = this.getNovaPosicaoPerson(direcao)
         this.updatePersonagem(novaPosicao)
     },
 
@@ -33,7 +33,7 @@ export default {
         $pedra.style.top = novaPosicao[1] + 'px'
     },
 
-    getNovaPosicao(direcao) {
+    getNovaPosicaoPerson(direcao) {
         let novaPosicao = [...data.personagem]
 
         this.computaPosicao(direcao, novaPosicao)
@@ -69,22 +69,33 @@ export default {
         }
     },
 
+    verificaColisaoPedraPedra(direcao, novaPosicaoPedra) {
+        for (const pedra of data.pedras) {
+            const colide = this.colide(direcao, novaPosicaoPedra, pedra)
+
+            if (colide) {
+                return true 
+            }
+        }
+    },
+
     verificaColisaoPedra(direcao, novaPosicaoPerson) {
         for (const pedra of data.pedras) {
             const colide = this.colide(direcao, novaPosicaoPerson, pedra)
+            const podeMover = this.verificaColisaoPedraPedra(direcao, pedra)
 
-            // console.log(novaPosicaoPerson, pedra);
-            if (colide) {
-                // console.log('colide');
-                
-                // this.computaPosicao(direcao, pedra)
-                // this.updatePedra(pedra)
-                // this.aplicaGravidade(pedra)
-                
+            if (colide && podeMover) {
                 this.movimentaPedra(direcao, pedra)
+                return
+            } else if (colide && !podeMover) {
+                this.colaNoObstaculo(direcao, novaPosicaoPerson, pedra)
                 return
             }
         }
+    },
+
+    podeMoverPedra(direcao, pedra) {
+        this.verificaColisaoPedra(direcao, pedra)
     },
 
     computaPosicao(direcao, novaPosicao) {
