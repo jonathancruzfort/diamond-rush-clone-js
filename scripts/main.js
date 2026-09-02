@@ -16,7 +16,7 @@ export default {
 
             div.classList = `bloco ${classe}`
             div.textContent = index
-            div.dataset.posisao = index
+            div.dataset.posicao = index
 
             $.mapa.appendChild(div)
         })
