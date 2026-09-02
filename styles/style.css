@@ -8,27 +8,41 @@
     margin: 10px auto;
     position: relative;
 
-    width: 444px;
-    height: 404px;
+    width: 804px;
+    height: 604px;
     border: 2px solid sandybrown;
+
+    display: flex;
+    flex-wrap: wrap;
 }
 
-.caixa {
-    width: 40px;
-    height: 40px;
-    background-color: blueviolet;
-
-    top: 10px;
-    left: 20px;
+.bloco {
+    width: 20px;
+    height: 20px;
+    background-color: transparent;
+    font-size: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid red;
 }
 
-.obstaculo {
-    background-color: rgb(49, 58, 34);
+.parede {
+    background-color: black;
+    color: white;
+}
+
+.personagem {
+    background-color: blue;
 }
 
 .pedra {
     background-color: rgb(235, 199, 99);
     border-radius: 50%;
+}
+
+.obstaculo {
+    background-color: rgb(49, 58, 34);
 }
 
 .pedra-caindo {
