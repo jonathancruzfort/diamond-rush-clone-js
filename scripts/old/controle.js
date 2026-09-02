@@ -21,11 +21,4 @@ export default {
     ArrowLeft() {
         personagem.movimenta('esquerda')
     },
-
-    Space() {
-        const caixa = document.querySelector('.pedra');
-
-        // Pausa a animação no frame exato onde ela estiver
-        caixa.style.animationPlayState = 'paused';
-    },
 }
