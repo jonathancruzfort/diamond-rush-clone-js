@@ -9,12 +9,14 @@ export default {
     },
 
     renderElementos() {
+        $.mapa.innerHTML = ''
         data.matriz.forEach((item, index) => {
             const div = document.createElement('div')
             const classe = this.getClassBloco(item)
 
             div.classList = `bloco ${classe}`
-            div.textContent = index +1
+            div.textContent = index
+            div.dataset.posisao = index
 
             $.mapa.appendChild(div)
         })
