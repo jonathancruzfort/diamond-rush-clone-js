@@ -27,7 +27,7 @@ export default {
         }
 
         if (data.matriz[proximaPosicao] === 3) {
-            this.movimentaPedra(posicaoPerson, proximaPosicao, direcao)
+            this.updatePedra(proximaPosicao, direcao)
             this.updatePersonagem(posicaoPerson, proximaPosicao)
         }
     },
@@ -44,20 +44,85 @@ export default {
         $proximoBloco.classList = 'bloco personagem'
     },
 
-    movimentaPedra(posicaoPerson, proximaPosicao, direcao) {
-        // const $blocoAtual = $.mapa.querySelector(`[data-posicao="${posicaoPerson}"]`)
-        const indexBloco = this.computaNovaPosicao(proximaPosicao, direcao)
-        const $proximoBloco = $.mapa.querySelector(`[data-posicao="${indexBloco}"]`)
+    updatePedra2(posicaoPedra, direcao, tempoAnterior = 0) {
+        const velocidadeMs = 100
+        const proximaPosicaoPedra = this.computaNovaPosicao(posicaoPedra, direcao)
 
-        
-        
-        if (data.matriz[indexBloco] !== 0) return
-        console.log($proximoBloco);
+        requestAnimationFrame(tempoAtual => {
+            // 1. Se ainda não deu o tempo necessário, aguarda o próximo frame mantendo as posições
+            if (tempoAtual - tempoAnterior < velocidadeMs) {
+                this.updatePedra2(posicaoPedra, direcao, tempoAnterior);
+                return;
+            }
 
-        data.matriz[proximaPosicao] = 0
-        data.matriz[Number(proximaPosicao) + 1] = 3
-        // $blocoAtual.classList = 'bloco'
-        $proximoBloco.classList = 'bloco pedra'
+            // // 2. Valida a colisão na matriz antes de mover
+            if (data.matriz[proximaPosicaoPedra] !== 0) return;
+
+            // // 3. Atualiza a lógica (matriz) e a interface (DOM)
+            const $blocoAtual = $.mapa.querySelector(`[data-posicao="${posicaoPedra}"]`);
+            const $proximoBloco = $.mapa.querySelector(`[data-posicao="${proximaPosicaoPedra}"]`);
+
+            data.matriz[posicaoPedra] = 0;
+            data.matriz[proximaPosicaoPedra] = 3;
+
+            $blocoAtual.classList = 'bloco'
+            $proximoBloco.classList = 'bloco pedra'
+
+            // 4. Chama o próximo passo da queda passando o tempoAtual como novo marco
+            this.updatePedra2(proximaPosicaoPedra, 'baixo', tempoAtual);
+        });
+    },
+
+    updatePedra(posicaoPedra, direcao, tempoAnterior = 0) {
+        const velocidadeMs = 40
+        let proximaPosicao = this.computaNovaPosicao(posicaoPedra, direcao)
+        let $blocoAtual = $.mapa.querySelector(`[data-posicao="${posicaoPedra}"]`)
+        let $proximoBloco = $.mapa.querySelector(`[data-posicao="${proximaPosicao}"]`)
+
+        if (data.matriz[proximaPosicao] !== 0) return
+
+        if (direcao !== 'baixo') {
+            data.matriz[posicaoPedra] = 0
+            data.matriz[proximaPosicao] = 3
+            $blocoAtual.classList = 'bloco'
+            $proximoBloco.classList = 'bloco pedra'
+        }
+
+        requestAnimationFrame(tempoAtual => {
+            if (tempoAtual - tempoAnterior < velocidadeMs) {
+                this.updatePedra(posicaoPedra, 'baixo', tempoAtual)
+            }
+
+            proximaPosicao = this.computaNovaPosicao(proximaPosicao, direcao)
+            $blocoAtual = $.mapa.querySelector(`[data-posicao="${posicaoPedra}"]`)
+            $proximoBloco = $.mapa.querySelector(`[data-posicao="${proximaPosicao}"]`)
+
+            if (data.matriz[proximaPosicao] !== 0) return
+
+            data.matriz[posicaoPedra] = 0
+            data.matriz[proximaPosicao] = 3
+            $blocoAtual.classList = 'bloco'
+            $proximoBloco.classList = 'bloco pedra'
+
+            this.updatePedra(proximaPosicao, 'baixo')
+        })
+    },
+
+
+    movimentaPedra(posicaoPedra, direcao) {
+        const proximaPosicaoPedra = this.computaNovaPosicao(posicaoPedra, direcao)
+
+        this.updatePedra(posicaoPedra, proximaPosicaoPedra)
+        // requestAnimationFrame(t => this.movimentaPedra(posicaoPedra, 'baixo'))
+        // this.updatePersonagem(posicaoPerson, posicaoPedra)
+        // const $proximoBloco = $.mapa.querySelector(`[data-posicao="${indexProximoBloco}"]`)
+
+        // if (data.matriz[indexProximoBloco] !== 0) return
+
+        // data.matriz[posicaoPedra] = 0
+        // data.matriz[indexProximoBloco] = 3
+        // $proximoBloco.classList = 'bloco pedra'
+        // requestAnimationFrame(t => this.movimentaPedra(posicaoPedra, 'baixo'))
     },
 
     computaNovaPosicao(posicao, direcao) {
