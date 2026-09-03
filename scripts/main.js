@@ -15,7 +15,7 @@ export default {
             const classe = this.getClassBloco(item)
 
             div.classList = `bloco ${classe}`
-            div.textContent = index
+            // div.textContent = index
             div.dataset.posicao = index
 
             $.mapa.appendChild(div)
