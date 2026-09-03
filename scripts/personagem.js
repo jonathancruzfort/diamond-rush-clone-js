@@ -27,7 +27,7 @@ export default {
         }
 
         if (data.matriz[proximaPosicao] === 3) {
-            this.movimentaPedra(posicaoPerson, proximaPosicao)
+            this.movimentaPedra(posicaoPerson, proximaPosicao, direcao)
             this.updatePersonagem(posicaoPerson, proximaPosicao)
         }
     },
@@ -44,18 +44,29 @@ export default {
         $proximoBloco.classList = 'bloco personagem'
     },
 
-    movimentaPedra(posicaoPerson, proximaPosicao) {
+    movimentaPedra(posicaoPerson, proximaPosicao, direcao) {
         // const $blocoAtual = $.mapa.querySelector(`[data-posicao="${posicaoPerson}"]`)
-        const $proximoBloco = $.mapa.querySelector(`[data-posicao="${Number(proximaPosicao) + 1}"]`)
+        const indexBloco = this.computaNovaPosicao(proximaPosicao, direcao)
+        const $proximoBloco = $.mapa.querySelector(`[data-posicao="${indexBloco}"]`)
 
-        console.log($proximoBloco);
         
-
-        if (data.matriz[Number(proximaPosicao) + 1] !== 0) return
+        
+        if (data.matriz[indexBloco] !== 0) return
+        console.log($proximoBloco);
 
         data.matriz[proximaPosicao] = 0
         data.matriz[Number(proximaPosicao) + 1] = 3
         // $blocoAtual.classList = 'bloco'
         $proximoBloco.classList = 'bloco pedra'
+    },
+
+    computaNovaPosicao(posicao, direcao) {
+        const orientacao = {
+            'direita': Number(posicao) + 1,
+            'esquerda': Number(posicao) - 1,
+            'cima': Number(posicao) - 40,
+            'baixo': Number(posicao) + 40,
+        }
+        return orientacao[direcao]
     },
 }
