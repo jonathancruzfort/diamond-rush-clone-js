@@ -21,7 +21,7 @@ export default {
         if (direcao === 'direita') {
             proximaPosicao = Number(posicaoPerson) + 1
         }
-
+        
         if (data.matriz[proximaPosicao] === 0) {
             this.updatePersonagem(posicaoPerson, proximaPosicao)
         }
@@ -29,8 +29,7 @@ export default {
         if (data.matriz[proximaPosicao] === 3) {
             this.updatePedra(proximaPosicao, direcao)
             this.updatePersonagem(posicaoPerson, proximaPosicao)
-            this.caiPedra(this.computaNovaPosicao(proximaPosicao, direcao))
-
+            this.caiPedra(this.computaNovaPosicao(proximaPosicao, direcao), direcao)
         }
     },
 
@@ -59,20 +58,23 @@ export default {
         $proximoBloco.classList = 'bloco pedra'
     },
 
-    caiPedra(posicaoPedra, tempoAnterior = 0) {
+    caiPedra(posicaoPedra, direcao, tempoAnterior = 0) {
         const velocidadeMs = 60
+
+        if (direcao === 'baixo') return
 
         requestAnimationFrame(tempoAtual => {
             const proximaPosicao = this.computaNovaPosicao(posicaoPedra, 'baixo')
             
             if (tempoAtual - tempoAnterior < velocidadeMs) {
-                this.caiPedra(posicaoPedra, tempoAnterior)
+                this.caiPedra(posicaoPedra, direcao, tempoAnterior)
                 return
             }
             
             if (data.matriz[proximaPosicao] !== 0) return
+            
             this.updatePedra(posicaoPedra, 'baixo')
-            this.caiPedra(proximaPosicao, tempoAtual)
+            this.caiPedra(proximaPosicao, direcao, tempoAtual)
         })
     },
 
