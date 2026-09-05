@@ -28,6 +28,7 @@ export default {
             1: 'parede',
             2: 'personagem',
             3: 'pedra',
+            4: 'mato',
         }
 
         return variantes[item]

@@ -21,15 +21,21 @@ export default {
         if (direcao === 'direita') {
             proximaPosicao = Number(posicaoPerson) + 1
         }
-        
+
         if (data.matriz[proximaPosicao] === 0) {
             this.updatePersonagem(posicaoPerson, proximaPosicao)
+        }
+
+        if (data.matriz[proximaPosicao] === 4) {
+            this.updatePersonagem(posicaoPerson, proximaPosicao)
+            this.verificaCimaPersonagem(proximaPosicao)
         }
 
         if (data.matriz[proximaPosicao] === 3) {
             this.updatePedra(proximaPosicao, direcao)
             this.updatePersonagem(posicaoPerson, proximaPosicao)
             this.caiPedra(this.computaNovaPosicao(proximaPosicao, direcao), direcao)
+            this.verificaCimaPersonagem(proximaPosicao)
         }
     },
 
@@ -37,7 +43,7 @@ export default {
         const $blocoAtual = $.mapa.querySelector(`[data-posicao="${posicaoPerson}"]`)
         const $proximoBloco = $.mapa.querySelector(`[data-posicao="${proximaPosicao}"]`)
 
-        if (data.matriz[proximaPosicao] !== 0) return
+        if (data.matriz[proximaPosicao] !== 0 && data.matriz[proximaPosicao] !== 4) return
 
         data.matriz[posicaoPerson] = 0
         data.matriz[proximaPosicao] = 2
@@ -65,17 +71,34 @@ export default {
 
         requestAnimationFrame(tempoAtual => {
             const proximaPosicao = this.computaNovaPosicao(posicaoPedra, 'baixo')
-            
+
             if (tempoAtual - tempoAnterior < velocidadeMs) {
                 this.caiPedra(posicaoPedra, direcao, tempoAnterior)
                 return
             }
-            
+
+            if (data.matriz[proximaPosicao] === 2) {
+                console.log('morreu');
+                return
+            }
+
             if (data.matriz[proximaPosicao] !== 0) return
-            
+
             this.updatePedra(posicaoPedra, 'baixo')
             this.caiPedra(proximaPosicao, direcao, tempoAtual)
         })
+    },
+
+    verificaCimaPersonagem(posiPerson) {
+        const blocoDeCima = data.matriz[posiPerson - 40]
+        const blocoAtual = data.matriz[posiPerson]
+        
+        if (blocoDeCima === 3 && blocoAtual === 2) {
+            setTimeout(() => {
+                this.caiPedra(posiPerson - 40, 'direia')
+            }, 500)
+            return
+        }
     },
 
     computaNovaPosicao(posicao, direcao) {

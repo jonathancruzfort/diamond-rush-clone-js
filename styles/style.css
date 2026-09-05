@@ -41,6 +41,10 @@
     border-radius: 50%;
 }
 
+.mato {
+    background-color: rgb(84, 151, 67);
+}
+
 .obstaculo {
     background-color: rgb(49, 58, 34);
 }
