@@ -4,39 +4,32 @@ import $ from './elements.js'
 
 export default {
     movimenta(direcao) {
-        let proximaPosicao
-
         const $personagem = $.mapa.querySelector('.personagem')
-        const posicaoPerson = $personagem.dataset.posicao
+        const posiPerson = $personagem.dataset.posicao
+        const proximaPosi = this.computaNovaPosicao(posiPerson, direcao)
+        const bloco = data.matriz[proximaPosi] 
 
-        if (direcao === 'cima') {
-            proximaPosicao = Number(posicaoPerson) - 40
-        }
-        if (direcao === 'baixo') {
-            proximaPosicao = Number(posicaoPerson) + 40
-        }
-        if (direcao === 'esquerda') {
-            proximaPosicao = Number(posicaoPerson) - 1
-        }
-        if (direcao === 'direita') {
-            proximaPosicao = Number(posicaoPerson) + 1
+        this.acaoProximoBloco(bloco, posiPerson, proximaPosi, direcao)
+    },
+
+    acaoProximoBloco(bloco, posiPerson, proximaPosi, direcao) {
+        const tiposBlocos = {
+            0: () => this.updatePersonagem(posiPerson, proximaPosi),
+            3: () => {
+                const proximaPosiPedra = this.computaNovaPosicao(proximaPosi, direcao)
+
+                this.updatePedra2(proximaPosi, proximaPosiPedra)
+                this.updatePersonagem(posiPerson, proximaPosi)
+                this.caiPedra(this.computaNovaPosicao(proximaPosi, direcao), direcao)
+                this.verificaCimaPersonagem(proximaPosi)
+            },
+            4: () => {
+                this.updatePersonagem(posiPerson, proximaPosi)
+                this.verificaCimaPersonagem(proximaPosi)
+            },
         }
 
-        if (data.matriz[proximaPosicao] === 0) {
-            this.updatePersonagem(posicaoPerson, proximaPosicao)
-        }
-
-        if (data.matriz[proximaPosicao] === 4) {
-            this.updatePersonagem(posicaoPerson, proximaPosicao)
-            this.verificaCimaPersonagem(proximaPosicao)
-        }
-
-        if (data.matriz[proximaPosicao] === 3) {
-            this.updatePedra(proximaPosicao, direcao)
-            this.updatePersonagem(posicaoPerson, proximaPosicao)
-            this.caiPedra(this.computaNovaPosicao(proximaPosicao, direcao), direcao)
-            this.verificaCimaPersonagem(proximaPosicao)
-        }
+        tiposBlocos[bloco]()
     },
 
     updatePersonagem(posicaoPerson, proximaPosicao) {
@@ -49,6 +42,18 @@ export default {
         data.matriz[proximaPosicao] = 2
         $blocoAtual.classList = 'bloco'
         $proximoBloco.classList = 'bloco personagem'
+    },
+
+    updatePedra2(posicaoPedra, proximaPosicao) {
+        const $blocoAtual = $.mapa.querySelector(`[data-posicao="${posicaoPedra}"]`)
+        const $proximoBloco = $.mapa.querySelector(`[data-posicao="${proximaPosicao}"]`)
+
+        if (data.matriz[proximaPosicao] !== 0) return
+
+        data.matriz[posicaoPedra] = 0
+        data.matriz[proximaPosicao] = 3
+        $blocoAtual.classList = 'bloco'
+        $proximoBloco.classList = 'bloco pedra'
     },
 
     updatePedra(posicaoPedra, direcao) {
@@ -84,7 +89,7 @@ export default {
 
             if (data.matriz[proximaPosicao] !== 0) return
 
-            this.updatePedra(posicaoPedra, 'baixo')
+            this.updatePedra2(posicaoPedra, proximaPosicao)
             this.caiPedra(proximaPosicao, direcao, tempoAtual)
         })
     },
@@ -92,7 +97,7 @@ export default {
     verificaCimaPersonagem(posiPerson) {
         const blocoDeCima = data.matriz[posiPerson - 40]
         const blocoAtual = data.matriz[posiPerson]
-        
+
         if (blocoDeCima === 3 && blocoAtual === 2) {
             setTimeout(() => {
                 this.caiPedra(posiPerson - 40, 'direia')
