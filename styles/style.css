@@ -24,7 +24,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid red;
+    /* border: 1px solid red; */
 }
 
 .parede {
@@ -33,7 +33,21 @@
 }
 
 .personagem {
-    background-color: blue;
+    /* background-color: blue; */
+    background-image: url('../imagens/indiana.jpg');
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+    animation: andar 0.8s steps(4) infinite;
+}
+
+@keyframes andar {
+  from {
+    background-position: 50px 0px;
+  }
+  to {
+    /* Desloca a largura total da imagem para a esquerda */
+    background-position: -128px 0px; 
+  }
 }
 
 .pedra {
