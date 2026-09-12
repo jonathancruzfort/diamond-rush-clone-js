@@ -19,6 +19,8 @@ export default {
         window.addEventListener('keyup', this.stopMoviment.bind(this)) 
 
         this.gameLoop()
+        console.log('teste');
+        
     },
 
     gameLoop() {
