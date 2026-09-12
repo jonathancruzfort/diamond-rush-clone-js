@@ -1,55 +1,60 @@
 import Player from "./classes/Player.js"
 
 export default {
+    canvas: null,
+    ctx: null,
+    player: null,
+    keys: { left: false, up: false, right: false, down: false, },
+
     load() {
-        const canvas = document.querySelector('canvas')
-        const ctx = canvas.getContext('2d')
+        this.canvas = document.querySelector('canvas')
+        this.ctx = this.canvas.getContext('2d')
 
-        canvas.width = 800
-        canvas.height = 600
+        this.canvas.width = 800
+        this.canvas.height = 600
 
-        const player = new Player()
+        this.player = new Player()
 
-        const keys = {
-            left: false,
-            up: false,
-            right: false,
-            down: false,
-        }
+        window.addEventListener('keydown', this.startMoviment.bind(this))
+        window.addEventListener('keyup', this.stopMoviment.bind(this)) 
 
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowUp') keys.up = true
-            if (e.key === 'ArrowDown') keys.down = true
-            if (e.key === 'ArrowLeft') keys.left = true
-            if (e.key === 'ArrowRight') keys.right = true
-        })
-        window.addEventListener('keyup', (e) => {
-            if (e.key === 'ArrowUp') keys.up = false
-            if (e.key === 'ArrowDown') keys.down = false
-            if (e.key === 'ArrowLeft') keys.left = false
-            if (e.key === 'ArrowRight') keys.right = false
-        })
-
-        this.gameLoop(player, ctx, canvas, keys)
+        this.gameLoop()
     },
 
-    gameLoop(player, ctx, canvas, keys) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
+    gameLoop() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
-        if (keys.left && player.position.x >= 0) {
-            player.moveLeft()
-        }
-        if (keys.up && player.position.y >= 0) {
-            player.moveUp()
-        }
-        if (keys.right && player.position.x <= canvas.width - player.width) {
-            player.moveRight()
-        }
-        if (keys.down && player.position.y <= canvas.height - player.height) {
-            player.moveDown()
-        }
+        if (this.keys.left &&
+        this.player.position.x >= 0)
+            this.player.moveLeft()
 
-        player.draw(ctx)
-        requestAnimationFrame(t => this.gameLoop(player, ctx, canvas, keys))
-    }
+        if (this.keys.up &&
+        this.player.position.y >= 0)
+            this.player.moveUp()
+
+        if (this.keys.right &&
+        this.player.position.x <= this.canvas.width - this.player.width)
+            this.player.moveRight()
+
+        if (this.keys.down &&
+        this.player.position.y <= this.canvas.height - this.player.height)
+            this.player.moveDown()
+
+        this.player.draw(this.ctx)
+        requestAnimationFrame(this.gameLoop.bind(this))
+    },
+
+    startMoviment(e) {
+        if (e.key === 'ArrowUp') this.keys.up = true
+        if (e.key === 'ArrowDown') this.keys.down = true
+        if (e.key === 'ArrowLeft') this.keys.left = true
+        if (e.key === 'ArrowRight') this.keys.right = true
+    },
+
+    stopMoviment(e) {
+        if (e.key === 'ArrowUp') this.keys.up = false
+        if (e.key === 'ArrowDown') this.keys.down = false
+        if (e.key === 'ArrowLeft') this.keys.left = false
+        if (e.key === 'ArrowRight') this.keys.right = false
+    },
 }

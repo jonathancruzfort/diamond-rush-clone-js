@@ -3,11 +3,7 @@ class Player {
         this.width = 40
         this.height = 40
         this.velocity = 10
-
-        this.position = {
-            x: 0,
-            y: 0,
-        }
+        this.position = { x: 0, y: 0, }
     }
 
     moveLeft() {
