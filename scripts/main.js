@@ -28,12 +28,10 @@ export default {
     setSprits() {
         this.world = new World()
         this.player = new Player()
-        
     },
 
     setEvents() {
         addEventListener('keydown', this.startMoviment.bind(this))
-        addEventListener('keyup', this.stopMoviment.bind(this))
     },
 
     updateCamera() {
@@ -54,18 +52,16 @@ export default {
             this.camera.y += (this.player.position.y + this.player.height) - deadzoneBottom
         }
 
-        // Limita a câmera usando os dados da classe World
         this.camera.x = Math.max(0, Math.min(this.world.width - this.canvas.width, this.camera.x))
         this.camera.y = Math.max(0, Math.min(this.world.height - this.canvas.height, this.camera.y))
     },
 
     gameLoop() {
-        this.handleInputs()
         this.updateCamera()
 
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
         this.ctx.save()
-        
+
         this.ctx.translate(-Math.round(this.camera.x), -Math.round(this.camera.y))
         this.world.draw(this.ctx)
         this.player.draw(this.ctx)
@@ -75,31 +71,41 @@ export default {
         requestAnimationFrame(this.gameLoop.bind(this))
     },
 
-    handleInputs() {
-        if (this.keys.left && this.player.position.x >= 0)
-            this.player.moveLeft()
-
-        if (this.keys.up && this.player.position.y >= 0)
-            this.player.moveUp()
-
-        if (this.keys.right && this.player.position.x <= this.world.width - this.player.width)
-            this.player.moveRight()
-
-        if (this.keys.down && this.player.position.y <= this.world.height - this.player.height)
-            this.player.moveDown()
-    },
+    // Remova o método handleInputs do gameLoop e trate o movimento no startMoviment
 
     startMoviment(e) {
-        if (e.key === 'ArrowUp') this.keys.up = true
-        if (e.key === 'ArrowDown') this.keys.down = true
-        if (e.key === 'ArrowLeft') this.keys.left = true
-        if (e.key === 'ArrowRight') this.keys.right = true
-    },
+        // 1. Define a intenção do próximo passo (20px)
+        let nextX = this.player.position.x
+        let nextY = this.player.position.y
 
-    stopMoviment(e) {
-        if (e.key === 'ArrowUp') this.keys.up = false
-        if (e.key === 'ArrowDown') this.keys.down = false
-        if (e.key === 'ArrowLeft') this.keys.left = false
-        if (e.key === 'ArrowRight') this.keys.right = false
+        if (e.key === 'ArrowLeft') nextX -= this.player.size
+        if (e.key === 'ArrowRight') nextX += this.player.size
+        if (e.key === 'ArrowUp') nextY -= this.player.size
+        if (e.key === 'ArrowDown') nextY += this.player.size
+
+        // Se nenhuma tecla de seta foi pressionada, encerra
+        if (nextX === this.player.position.x && nextY === this.player.position.y) return
+
+        // 2. Cria a caixa delimitadora da Posição Futura
+        const futureRect = {
+            x: nextX,
+            y: nextY,
+            width: this.player.width,
+            height: this.player.height
+        }
+
+        // 3. Valida os limites do mapa e paredes antes de efetivar o passo
+        const isWithinBounds =
+            nextX >= 0 &&
+            nextX <= this.world.width - this.player.width &&
+            nextY >= 0 &&
+            nextY <= this.world.height - this.player.height
+
+        if (isWithinBounds && !this.world.willCollideWithWall(futureRect)) {
+            if (e.key === 'ArrowLeft') this.player.moveLeft()
+            if (e.key === 'ArrowRight') this.player.moveRight()
+            if (e.key === 'ArrowUp') this.player.moveUp()
+            if (e.key === 'ArrowDown') this.player.moveDown()
+        }
     },
 }

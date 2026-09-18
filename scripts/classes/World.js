@@ -1,22 +1,48 @@
 class World {
-    constructor() {
-        this.width = 1440
-        this.height = 960
+    constructor(width = 1440, height = 960, imagePath = "../assets/images/cenarioTeste.jpeg") {
+        this.width = width
+        this.height = height
         this.image = new Image()
-        this.image.src = "../assets/images/cenarioTeste.jpeg"
+        this.image.src = imagePath
+
+        // Defina os retângulos das suas paredes no MUNDO (x, y, largura, altura)
+        this.walls = [
+            { x: 327, y: 22, width: 80, height: 80 }, // Ex: Parede horizontal
+            { x: 7, y: 102, width: 320, height: 80 }, // Ex: Parede horizontal
+            { x: 7, y: 342, width: 240, height: 80 }, // Ex: Parede horizontal
+            { x: 167, y: 422, width: 80, height: 80 }, // Ex: Parede horizontal
+            { x: 167, y: 502, width: 80, height: 80 }, // Ex: Parede horizontal
+            { x: 327, y: 422, width: 80, height: 80 }, // Ex: Parede horizontal
+            { x: 327, y: 502, width: 80, height: 80 }, // Ex: Parede horizontal
+            { x: 327, y: 342, width: 80, height: 80 }, // Ex: Parede horizontal
+            // { x: 600, y: 300, width: 40, height: 250 }, // Ex: Pilastra vertical
+            // { x: 800, y: 500, width: 200, height: 200 } // Ex: Bloco de pedra
+        ]
     }
 
-    isOutOfBounds(position, size) {
-        return {
-            left: position.x < 0,
-            right: position.x + size.width > this.width,
-            top: position.y < 0,
-            bottom: position.y + size.height > this.height
-        }
+    // Algoritmo de Colisão AABB (Verifica se dois retângulos se sobrepõem)
+    checkCollision(rect1, rect2) {
+        return (
+            rect1.x < rect2.x + rect2.width &&
+            rect1.x + rect1.width > rect2.x &&
+            rect1.y < rect2.y + rect2.height &&
+            rect1.y + rect1.height > rect2.y
+        )
+    }
+
+    // Testa se o jogador colidiria com alguma parede na posição futura
+    willCollideWithWall(futurePlayerRect) {
+        return this.walls.some(wall => this.checkCollision(futurePlayerRect, wall))
     }
 
     draw(ctx) {
         ctx.drawImage(this.image, 0, 0, this.width, this.height)
+
+        // OPCIONAL (Para Debug): Desenha as paredes em vermelho para você visualizar onde estão
+        // ctx.fillStyle = 'rgba(255, 0, 0, 0.5)'
+        // this.walls.forEach(wall => {
+        //     ctx.fillRect(wall.x, wall.y, wall.width, wall.height)
+        // })
     }
 }
 
