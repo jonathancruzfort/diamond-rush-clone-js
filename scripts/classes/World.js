@@ -1,26 +1,22 @@
 class World {
-    constructor(width = 1440, height = 960, imagePath = "../assets/images/cenarioTeste.jpeg") {
-        this.width = width
-        this.height = height
+    constructor() {
+        this.width = 1440
+        this.height = 960
         this.image = new Image()
-        this.image.src = imagePath
+        this.image.src = "../assets/images/cenarioTeste.jpeg"
 
-        // Defina os retângulos das suas paredes no MUNDO (x, y, largura, altura)
         this.walls = [
-            { x: 327, y: 22, width: 80, height: 80 }, // Ex: Parede horizontal
-            { x: 7, y: 102, width: 320, height: 80 }, // Ex: Parede horizontal
-            { x: 7, y: 342, width: 240, height: 80 }, // Ex: Parede horizontal
-            { x: 167, y: 422, width: 80, height: 80 }, // Ex: Parede horizontal
-            { x: 167, y: 502, width: 80, height: 80 }, // Ex: Parede horizontal
-            { x: 327, y: 422, width: 80, height: 80 }, // Ex: Parede horizontal
-            { x: 327, y: 502, width: 80, height: 80 }, // Ex: Parede horizontal
-            { x: 327, y: 342, width: 80, height: 80 }, // Ex: Parede horizontal
-            // { x: 600, y: 300, width: 40, height: 250 }, // Ex: Pilastra vertical
-            // { x: 800, y: 500, width: 200, height: 200 } // Ex: Bloco de pedra
+            { x: 327, y: 22, width: 80, height: 80 },
+            { x: 7, y: 102, width: 320, height: 80 },
+            { x: 7, y: 342, width: 240, height: 80 },
+            { x: 167, y: 422, width: 80, height: 80 },
+            { x: 167, y: 502, width: 80, height: 80 },
+            { x: 327, y: 422, width: 80, height: 80 },
+            { x: 327, y: 502, width: 80, height: 80 },
+            { x: 327, y: 342, width: 80, height: 80 },
         ]
     }
 
-    // Algoritmo de Colisão AABB (Verifica se dois retângulos se sobrepõem)
     checkCollision(rect1, rect2) {
         return (
             rect1.x < rect2.x + rect2.width &&
@@ -30,7 +26,6 @@ class World {
         )
     }
 
-    // Testa se o jogador colidiria com alguma parede na posição futura
     willCollideWithWall(futurePlayerRect) {
         return this.walls.some(wall => this.checkCollision(futurePlayerRect, wall))
     }

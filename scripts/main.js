@@ -71,10 +71,8 @@ export default {
         requestAnimationFrame(this.gameLoop.bind(this))
     },
 
-    // Remova o método handleInputs do gameLoop e trate o movimento no startMoviment
-
     startMoviment(e) {
-        // 1. Define a intenção do próximo passo (20px)
+        if (!this.player.canMove()) return
         let nextX = this.player.position.x
         let nextY = this.player.position.y
 
@@ -83,10 +81,8 @@ export default {
         if (e.key === 'ArrowUp') nextY -= this.player.size
         if (e.key === 'ArrowDown') nextY += this.player.size
 
-        // Se nenhuma tecla de seta foi pressionada, encerra
         if (nextX === this.player.position.x && nextY === this.player.position.y) return
 
-        // 2. Cria a caixa delimitadora da Posição Futura
         const futureRect = {
             x: nextX,
             y: nextY,
@@ -94,7 +90,6 @@ export default {
             height: this.player.height
         }
 
-        // 3. Valida os limites do mapa e paredes antes de efetivar o passo
         const isWithinBounds =
             nextX >= 0 &&
             nextX <= this.world.width - this.player.width &&
