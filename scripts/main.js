@@ -65,6 +65,7 @@ export default {
         this.ctx.translate(-Math.round(this.camera.x), -Math.round(this.camera.y))
         this.world.draw(this.ctx)
         this.player.draw(this.ctx)
+        this.player.updateAnimation()
 
         this.ctx.restore()
 
