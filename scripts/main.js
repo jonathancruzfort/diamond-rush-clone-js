@@ -32,26 +32,21 @@ export default {
 
     setEvents() {
         addEventListener('keydown', this.startMoviment.bind(this))
+        
+        // Evento keyup para avisar quando o jogador soltou as setas
+        addEventListener('keyup', this.stopMoviment.bind(this))
     },
 
     updateCamera() {
-        const deadzoneLeft = this.camera.x + (this.canvas.width - this.deadzone.width) / 2
-        const deadzoneRight = deadzoneLeft + this.deadzone.width
-        const deadzoneTop = this.camera.y + (this.canvas.height - this.deadzone.height) / 2
-        const deadzoneBottom = deadzoneTop + this.deadzone.height
+        // 1. Calcula o destino da câmera com base na Posição Visual do jogador (renderPosition)
+        const targetCameraX = this.player.renderPosition.x - (this.canvas.width - this.player.width) / 2
+        const targetCameraY = this.player.renderPosition.y - (this.canvas.height - this.player.height) / 2
 
-        if (this.player.position.x < deadzoneLeft) {
-            this.camera.x -= deadzoneLeft - this.player.position.x
-        } else if (this.player.position.x + this.player.width > deadzoneRight) {
-            this.camera.x += (this.player.position.x + this.player.width) - deadzoneRight
-        }
+        // 2. Interpolação suave para a câmera (0.1 = suavidade)
+        this.camera.x += (targetCameraX - this.camera.x) * 0.1
+        this.camera.y += (targetCameraY - this.camera.y) * 0.1
 
-        if (this.player.position.y < deadzoneTop) {
-            this.camera.y -= deadzoneTop - this.player.position.y
-        } else if (this.player.position.y + this.player.height > deadzoneBottom) {
-            this.camera.y += (this.player.position.y + this.player.height) - deadzoneBottom
-        }
-
+        // 3. Aplica os limites do mundo
         this.camera.x = Math.max(0, Math.min(this.world.width - this.canvas.width, this.camera.x))
         this.camera.y = Math.max(0, Math.min(this.world.height - this.canvas.height, this.camera.y))
     },
@@ -64,8 +59,9 @@ export default {
 
         this.ctx.translate(-Math.round(this.camera.x), -Math.round(this.camera.y))
         this.world.draw(this.ctx)
+        
+        // O player.draw(ctx) agora gerencia o update() e updateAnimation() internamente!
         this.player.draw(this.ctx)
-        this.player.updateAnimation()
 
         this.ctx.restore()
 
@@ -73,7 +69,13 @@ export default {
     },
 
     startMoviment(e) {
+        // Avisa que há uma tecla de movimento sendo pressionada
+        if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+            this.player.isKeyDown = true
+        }
+
         if (!this.player.canMove()) return
+
         let nextX = this.player.position.x
         let nextY = this.player.position.y
 
@@ -104,4 +106,11 @@ export default {
             if (e.key === 'ArrowDown') this.player.moveDown()
         }
     },
+
+    stopMoviment(e) {
+        // Avisa quando as teclas de direção foram soltas
+        if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+            this.player.isKeyDown = false
+        }
+    }
 }
