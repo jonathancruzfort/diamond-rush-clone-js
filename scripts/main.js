@@ -50,7 +50,6 @@ export default {
         })
     },
 
-    // Processa a intenção de movimento no momento certo do loop
     handleMovement() {
         let direction = null
 
@@ -61,14 +60,13 @@ export default {
 
         if (!direction) return
 
-        // 1. Tenta virar o personagem PRIMEIRO (mesmo se canMove() estiver bloqueado)
-        if (direction === 'left') this.player.turn(true)
-        if (direction === 'right') this.player.turn(false)
+        // 1. Tenta orientar o personagem para a direção apertada (Esquerda, Direita, Cima ou Baixo)
+        this.player.turn(direction)
 
-        // 2. Se estiver bloqueado pelo delay da virada ou já estiver andando, ignora o passo
+        // 2. Respeita a pausa antes de andar
         if (!this.player.canMove()) return
 
-        // 3. Se passou do tempo de virada e continua segurando a tecla, anda!
+        // 3. Executa o passo no grid
         let nextX = this.player.position.x
         let nextY = this.player.position.y
 
@@ -110,13 +108,9 @@ export default {
     },
 
     gameLoop() {
-        // 1. Tenta mover se o player estiver livre
         this.handleMovement()
-
-        // 2. Atualiza a posição da câmera
         this.updateCamera()
 
-        // 3. Renderiza a cena
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
         this.ctx.save()
 
