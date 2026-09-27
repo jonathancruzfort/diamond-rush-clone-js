@@ -1,10 +1,12 @@
 import Player from "./classes/Player.js"
+import Rock from "./classes/Rock.js"
 import World from "./classes/World.js"
 
 export default {
     canvas: null,
     ctx: null,
     player: null,
+    rock: null,
     world: null,
 
     camera: { x: 0, y: 0 },
@@ -27,6 +29,7 @@ export default {
     setSprits() {
         this.world = new World()
         this.player = new Player()
+        this.rock = new Rock()
     },
 
     setEvents() {
@@ -50,51 +53,92 @@ export default {
         })
     },
 
-    handleMovement() {
-        let direction = null
+   handleMovement() {
+    let direction = null
 
-        if (this.keys.left) direction = 'left'
-        else if (this.keys.right) direction = 'right'
-        else if (this.keys.up) direction = 'up'
-        else if (this.keys.down) direction = 'down'
+    if (this.keys.left)       direction = 'left'
+    else if (this.keys.right) direction = 'right'
+    else if (this.keys.up)    direction = 'up'
+    else if (this.keys.down)  direction = 'down'
 
-        if (!direction) return
+    if (!direction) return
 
-        // 1. Tenta orientar o personagem para a direção apertada (Esquerda, Direita, Cima ou Baixo)
-        this.player.turn(direction)
+    this.player.turn(direction)
 
-        // 2. Respeita a pausa antes de andar
-        if (!this.player.canMove()) return
+    if (!this.player.canMove()) return
 
-        // 3. Executa o passo no grid
-        let nextX = this.player.position.x
-        let nextY = this.player.position.y
+    // Calcula para onde o player quer ir
+    let nextX = this.player.position.x
+    let nextY = this.player.position.y
 
-        if (direction === 'left') nextX -= this.player.size
-        if (direction === 'right') nextX += this.player.size
-        if (direction === 'up') nextY -= this.player.size
-        if (direction === 'down') nextY += this.player.size
+    if (direction === 'left')  nextX -= this.player.size
+    if (direction === 'right') nextX += this.player.size
+    if (direction === 'up')    nextY -= this.player.size
+    if (direction === 'down')  nextY += this.player.size
 
-        const futureRect = {
-            x: nextX,
-            y: nextY,
-            width: this.player.width,
-            height: this.player.height
+    const playerFutureRect = {
+        x: nextX,
+        y: nextY,
+        width: this.player.width,
+        height: this.player.height
+    }
+
+    // 1. Verifica limites do mapa e paredes para o player
+    const isWithinBounds =
+        nextX >= 0 &&
+        nextX <= this.world.width - this.player.width &&
+        nextY >= 0 &&
+        nextY <= this.world.height - this.player.height
+
+    if (!isWithinBounds || this.world.willCollideWithWall(playerFutureRect)) {
+        return // Bateu na parede ou fora da tela
+    }
+
+    // 2. Colisão do Player com a Pedra
+    const isCollidingWithRock =
+        nextX === this.rock.position.x &&
+        nextY === this.rock.position.y
+
+    if (isCollidingWithRock) {
+        // Se a pedra estiver em movimento, o jogador não pode andar
+        if (this.rock.isMoving) return
+
+        // Calcula a próxima posição da pedra
+        let rockNextX = this.rock.position.x
+        let rockNextY = this.rock.position.y
+
+        if (direction === 'left')  rockNextX -= this.rock.size
+        if (direction === 'right') rockNextX += this.rock.size
+        if (direction === 'up')    rockNextY -= this.rock.size
+        if (direction === 'down')  rockNextY += this.rock.size
+
+        const rockFutureRect = {
+            x: rockNextX,
+            y: rockNextY,
+            width: this.rock.width,
+            height: this.rock.height
         }
 
-        const isWithinBounds =
-            nextX >= 0 &&
-            nextX <= this.world.width - this.player.width &&
-            nextY >= 0 &&
-            nextY <= this.world.height - this.player.height
+        const isRockInBounds =
+            rockNextX >= 0 &&
+            rockNextX <= this.world.width - this.rock.width &&
+            rockNextY >= 0 &&
+            rockNextY <= this.world.height - this.rock.height
 
-        if (isWithinBounds && !this.world.willCollideWithWall(futureRect)) {
-            if (direction === 'left') this.player.moveLeft()
-            if (direction === 'right') this.player.moveRight()
-            if (direction === 'up') this.player.moveUp()
-            if (direction === 'down') this.player.moveDown()
+        // Se a pedra pode se mover (sem parede na frente e dentro da tela)
+        if (isRockInBounds && !this.world.willCollideWithWall(rockFutureRect)) {
+            this.rock.push(direction) // Empurra a pedra
+        } else {
+            return // Pedra bloqueada por parede ou fora do mapa, bloqueia o player também
         }
-    },
+    }
+
+    // 3. Move o jogador se o caminho estiver livre (ou se empurrou a pedra com sucesso)
+    if (direction === 'left')  this.player.moveLeft()
+    if (direction === 'right') this.player.moveRight()
+    if (direction === 'up')    this.player.moveUp()
+    if (direction === 'down')  this.player.moveDown()
+},
 
     updateCamera() {
         const targetCameraX = this.player.renderPosition.x - (this.canvas.width - this.player.width) / 2
@@ -117,6 +161,7 @@ export default {
         this.ctx.translate(-Math.round(this.camera.x), -Math.round(this.camera.y))
         this.world.draw(this.ctx)
         this.player.draw(this.ctx)
+        this.rock.draw(this.ctx, this.world)
 
         this.ctx.restore()
 
