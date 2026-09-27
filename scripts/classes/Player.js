@@ -1,5 +1,5 @@
 class Player {
-    constructor(x = 7, y = 262) {
+    constructor(x = 7, y = 742) {
         this.size = 80
         this.width = this.size
         this.height = this.size
@@ -42,7 +42,7 @@ class Player {
 
         // Delay para virar
         this.lastTurnTime = 0
-        this.turnDelay = 250
+        this.turnDelay = 200
     }
 
     setAnimation(anim) {
