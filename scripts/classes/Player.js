@@ -22,7 +22,8 @@ class Player {
             IDLE:      { y: 1610, frameWidth: 64, height: 50, totalFrames: 2, frameInterval: 14 },
             WALK_DOWN: { y: 1354, frameWidth: 64, height: 50, totalFrames: 6, frameInterval: 4 },
             WALK_UP:   { y: 1354, frameWidth: 64, height: 50, totalFrames: 6, frameInterval: 4 },
-            WALK_SIDE: { y: 715,  frameWidth: 64, height: 50, totalFrames: 9, frameInterval: 4 }
+            WALK_SIDE: { y: 2636,  frameWidth: 64, height: 50, totalFrames: 8, frameInterval: 4 }
+            // WALK_SIDE: { y: 715,  frameWidth: 64, height: 50, totalFrames: 9, frameInterval: 4 }
         }
 
         this.currentAnim = this.animations.IDLE
@@ -32,7 +33,7 @@ class Player {
         this.frameTimer = 0
 
         // Movimento
-        this.moveSpeed = 4
+        this.moveSpeed = 5
         this.isMoving = false
         this.isKeyDown = false
 
